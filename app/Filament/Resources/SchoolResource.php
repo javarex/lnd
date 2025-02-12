@@ -2,21 +2,25 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\EmployeeResource\Pages;
-use App\Filament\Resources\EmployeeResource\RelationManagers;
-use App\Models\Employee;
+use App\Filament\Resources\SchoolResource\Pages;
+use App\Filament\Resources\SchoolResource\RelationManagers;
+use App\Models\Barangay;
+use App\Models\Municipal;
+use App\Models\School;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class EmployeeResource extends Resource
+class SchoolResource extends Resource
 {
-    protected static ?string $model = Employee::class;
+    protected static ?string $model = School::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -24,29 +28,24 @@ class EmployeeResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('first_name')
+                Forms\Components\TextInput::make('school')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('middle_name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('last_name')
-                    ->required()
-                    ->maxLength(255),
-                Select::make('school_id')
-                    ->relationship('school', 'school')
-                    ->preload()
-                    ->createOptionForm(fn(Form $form) => SchoolResource::form($form)),
-                // Forms\Components\TextInput::make('school')
-                //     ->required()
-                //     ->maxLength(255),
-                Forms\Components\Radio::make('employee_type')
-                    ->label('Employee Type')
-                    ->options([
-                        'Teaching' => 'Teaching',
-                        'Non-teaching' => 'Non-teaching',
-                    ])
+                Select::make('citymunCode')
+                    ->label('Municipyo')
+                    ->getSearchResultsUsing(fn($search) => Municipal::where('citymunDesc', 'like', "%$search%")->pluck('citymunDesc', 'citymunCode'))
+                    ->getOptionLabelUsing(fn(Get $get, $value) => Municipal::findOrFail($value)->citymunDesc)
+                    // ->afterStateHydrated(fn($state) => dd($state))
+                    // ->getOptionLabelUsing(fn($value) => ('test'))
+                    ->searchable()
                     ->required(),
+                Select::make('brgyCode')
+                    ->options(fn(Get $get) => Barangay::where('citymunCode', $get('citymunCode'))->pluck('brgyDesc', 'brgyCode'))
+                    ->getOptionLabelUsing(fn($value) => Barangay::findOrFail($value)->brgyDesc)
+                    // ->afterStateHydrated(fn($record, Set $set) => $set('citymunCode', $record->load('barangay')->citymunCode))
+                    // ->getSearchResultsUsing(fn($search, Get $get) => Barangay::where('citymunCode', $get('citymunCode'))->pluck('brgyDesc', 'brgyCode'))
+                    ->searchable()
+                    ->required()
             ]);
     }
 
@@ -54,15 +53,9 @@ class EmployeeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('first_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('middle_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('last_name')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('school')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('employee_type')
+                Tables\Columns\TextColumn::make('brgyCode')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -96,9 +89,9 @@ class EmployeeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListEmployees::route('/'),
-            'create' => Pages\CreateEmployee::route('/create'),
-            'edit' => Pages\EditEmployee::route('/{record}/edit'),
+            'index' => Pages\ListSchools::route('/'),
+            'create' => Pages\CreateSchool::route('/create'),
+            'edit' => Pages\EditSchool::route('/{record}/edit'),
         ];
     }
 }
