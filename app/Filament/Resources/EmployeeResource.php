@@ -60,7 +60,7 @@ class EmployeeResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('last_name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('school')
+                Tables\Columns\TextColumn::make('school.school')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('employee_type')
                     ->searchable(),
