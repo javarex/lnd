@@ -36,6 +36,7 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->brandLogo(asset('images/lnd-logo.png'))
+            
             ->brandLogoHeight(fn() => auth()->check() ? '4rem' : '7rem')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
