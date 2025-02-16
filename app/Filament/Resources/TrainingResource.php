@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 
 class TrainingResource extends Resource
 {
@@ -51,6 +52,10 @@ class TrainingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Html2MediaAction::make('print')
+                ->content(function() {
+                    return view('filament.reports.certificate');
+                })
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

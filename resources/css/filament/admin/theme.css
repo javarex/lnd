@@ -1,3 +1,31 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
 @config 'tailwind.config.js';
+
+.fi-sidebar {
+    @apply dark:bg-gray-800;
+    @apply bg-gray-300;
+}
+
+.fi-main {
+    /*@apply bg-auto bg-no-repeat bg-center ;*/
+    /*background-image: url("/public/images/lnd-logo.png");*/
+}
+
+/*#dashboard .fi-ta-ctn,*/
+/*#dashboard .fi-section*/
+/*{*/
+/*    @apply dark:bg-yellow-950/20 bg-yellow-600/60;*/
+/*}*/
+
+/*#dashboard .fi-ta-ctn,*/
+/*#dashboard .fi-ta*/
+/*{*/
+/*    @apply h-full;*/
+/*}*/
+
+#dashboard .fi-section,
+#dashboard .fi-ta-ctn
+{
+    @apply shadow-2xl shadow-gray-950/60;
+}

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusEnum;
 use App\Traits\HasDateFormat;
 use Guava\Calendar\ValueObjects\Event;
 use Guava\Calendar\Contracts\Eventable;
@@ -17,6 +18,10 @@ class CalendarOfTraining extends Model implements Eventable
 
     protected $guarded = [];
 
+    protected $casts = [
+        'status' => StatusEnum::class,
+    ];
+
     public function toEvent(): Event|array {
         return Event::make($this)
             ->action('edit')
@@ -25,19 +30,20 @@ class CalendarOfTraining extends Model implements Eventable
             ->end($this->end_date)
             // ->end(dd($this->end_date))
             ->extendedProp('participants', $this->participants()->count())
+            ->extendedProp('with_accreditation', $this->accreditation_number !== null)
             ->styles([
                 'color: black' => true,
-                'background-color' => '#ffff00', // Directly applies the background color
-                'font-size: 12px'  
+                'background-color' => $this->accreditation_number ? '#b37820' : '#ffff00', // Directly applies the background color
+                'font-size: 12px'
             ]);
     }
 
     public function duration(): Attribute
     {
         return Attribute::make(
-            get: fn () => 
+            get: fn () =>
                 $this->longDate($this->start_date)
-                    .(!$this->isSameDate() 
+                    .(!$this->isSameDate()
                         ? " - {$this->longDate($this->end_date)}"
                         : null)
         );

@@ -36,15 +36,24 @@ class calendarTrainingWidget extends CalendarWidget
     protected bool $eventDragEnabled = true;
     protected ?string $locale = 'en';
     protected string | Closure | HtmlString | null $heading = 'Calendar of trainings';
+    protected int | string | array $columnSpan = 1;
 
     public function authorize($ability, $arguments = [])
     {
         return true;
     }
 
+    public function getColumnSpan(): int|string|array
+    {
+        return [
+            'lg' => 2,
+            'xl' => 1,
+        ];
+    }
+
     public function getEvents(array $fetchInfo = []): Collection | array
     {
-        
+
         return collect()
                 ->push(
                     ...CalendarOfTraining::query()
@@ -55,7 +64,7 @@ class calendarTrainingWidget extends CalendarWidget
                                 $item->end_date = Carbon::parse($item->end_date)->endOfDay();
                             })
                 );
-      
+
     }
 
     public function getEventContent(): null | string | array
@@ -137,7 +146,7 @@ class calendarTrainingWidget extends CalendarWidget
                     $data['participants'] = $record->load('participants');
                     return $data;
                 })
-                
+
         ];
     }
 
@@ -217,7 +226,7 @@ class calendarTrainingWidget extends CalendarWidget
                 ])
                 ->visible(fn($operation) => $operation === 'with_accreditation')
         ];
-    
+
         // If you have multiple model types on your calendar, you can return different schemas based on the $model property
         // return match($model) {
         //     CalendarOfTraining::class => [
