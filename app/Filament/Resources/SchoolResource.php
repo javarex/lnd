@@ -22,7 +22,9 @@ class SchoolResource extends Resource
 {
     protected static ?string $model = School::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-building-library';
+
+    protected static ?string $navigationGroup = 'Libraries';
 
     public static function form(Form $form): Form
     {
@@ -32,7 +34,7 @@ class SchoolResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Select::make('citymunCode')
-                    ->label('Municipyo')
+                    ->label('Municipal')
                     ->getSearchResultsUsing(fn($search) => Municipal::where('citymunDesc', 'like', "%$search%")->pluck('citymunDesc', 'citymunCode'))
                     ->getOptionLabelUsing(fn(Get $get, $value) => Municipal::findOrFail($value)->citymunDesc)
                     // ->afterStateHydrated(fn($state) => dd($state))
@@ -40,6 +42,7 @@ class SchoolResource extends Resource
                     ->searchable()
                     ->required(),
                 Select::make('brgyCode')
+                    ->label('Barangay')
                     ->options(fn(Get $get) => Barangay::where('citymunCode', $get('citymunCode'))->pluck('brgyDesc', 'brgyCode'))
                     ->getOptionLabelUsing(fn($value) => Barangay::findOrFail($value)->brgyDesc)
                     // ->afterStateHydrated(fn($record, Set $set) => $set('citymunCode', $record->load('barangay')->citymunCode))
