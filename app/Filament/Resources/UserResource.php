@@ -12,12 +12,15 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $navigationGroup = 'Administration';
 
     public static function form(Form $form): Form
     {
@@ -26,13 +29,21 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('username')
+                    ->required()
+                    ->maxLength(50),
+                Forms\Components\CheckboxList::make('roles')
+                    ->relationship('roles', 'name')
+                    ->searchable(),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
                     ->maxLength(255),
+                Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
+                    ->dehydrated(fn($operation, $state) => $operation === 'create' || ($state !== null && strtolower($operation) === 'edit'))
+                    ->required(fn($operation) => strtolower($operation) === 'create')
                     ->password()
-                    ->required()
                     ->maxLength(255),
             ]);
     }
@@ -43,8 +54,17 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('username')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->badge()
+                    ->listWithLineBreaks()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('email_verified_at')
+                    ->dateTime()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -59,6 +79,7 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Impersonate::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
