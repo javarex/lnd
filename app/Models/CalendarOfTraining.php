@@ -3,15 +3,18 @@
 namespace App\Models;
 
 use App\Enums\StatusEnum;
+use App\Models\Scopes\CalendarOfTraining\UserFilterScope;
 use App\Traits\HasDateFormat;
 use Guava\Calendar\ValueObjects\Event;
 use Guava\Calendar\Contracts\Eventable;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[ScopedBy(UserFilterScope::class)]
 class CalendarOfTraining extends Model implements Eventable
 {
     use HasDateFormat;

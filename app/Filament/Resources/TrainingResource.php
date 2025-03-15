@@ -52,10 +52,6 @@ class TrainingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Html2MediaAction::make('print')
-                ->content(function() {
-                    return view('filament.reports.certificate');
-                })
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
