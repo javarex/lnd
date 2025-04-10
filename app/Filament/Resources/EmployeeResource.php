@@ -53,6 +53,7 @@ class EmployeeResource extends Resource
                         ->options([
                             'Teaching' => 'Teaching',
                             'Non-teaching' => 'Non-teaching',
+                            'Teaching Related / School Head' => 'Teaching Related / School Head',
                         ])
                         ->required(),
                 ])
