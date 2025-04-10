@@ -224,7 +224,12 @@ class calendarTrainingWidget extends CalendarWidget
                     TextInput::make('approved_credit_units')
                         ->required(),
                 ])
-                ->visible(fn($operation) => $operation === 'with_accreditation')
+                ->visible(fn($operation) => $operation === 'with_accreditation'),
+            Repeater::make('twgTrainings')
+                ->relationship()
+                ->simple(
+                    Select::make('fullname')
+                )
         ];
 
         // If you have multiple model types on your calendar, you can return different schemas based on the $model property
