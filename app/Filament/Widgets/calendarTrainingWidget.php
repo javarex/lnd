@@ -248,6 +248,7 @@ class calendarTrainingWidget extends CalendarWidget
             //             ->preload()
             //             ->createOptionForm(fn($form) => EmployeeResource::form($form))
             //     )
+            //     ->grid(2)
             //     ->addActionLabel('Add Technical Working Group')
             
         ];

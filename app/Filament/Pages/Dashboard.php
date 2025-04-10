@@ -10,9 +10,9 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class Dashboard extends \Filament\Pages\Dashboard
 {
-    protected static ?string $navigationIcon = 'heroicon-o-home';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-date-range';
 
-    protected static ?string $navigationLabel = 'Home';
+    protected static ?string $navigationLabel = 'Trainings';
 
     public function getTitle(): string|Htmlable
     {
