@@ -3,21 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class TwgTraining extends Model
+class TrainingTrainer extends Model
 {
-
-    protected $table = 'twg_training';
+    protected $table = 'training_trainer';
 
     protected $guarded = [];
     
-    public $incrementing = true;
-
-    public function employee(): BelongsTo
+    public function trainer(): BelongsTo
     {
-        return $this->belongsTo(Employee::class);
+        return $this->belongsTo(Trainer::class);
     }
 
     public function calendarOfTraining(): BelongsTo

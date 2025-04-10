@@ -87,4 +87,15 @@ class CalendarOfTraining extends Model implements Eventable
     {
         return $this->hasMany(TwgTraining::class);
     }
+
+    public function trainingTrainers(): HasMany
+    {
+        return $this->hasMany(TrainingTrainer::class);
+    }
+
+    public function trainers(): BelongsToMany
+    {
+        return $this->belongsToMany(Trainer::class, 'training_trainer');
+    }   
+
 }
