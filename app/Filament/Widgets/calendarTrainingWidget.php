@@ -190,7 +190,7 @@ class calendarTrainingWidget extends CalendarWidget
     {
         // If you only work with one model type, you can ignore the $model parameter and simply return a schema
         return [
-            Grid::make(columns: 2)
+            Grid::make(columns: 3)
                 ->schema([
                     Select::make('training_id')
                         ->label('Training')

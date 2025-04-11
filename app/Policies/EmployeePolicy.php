@@ -105,4 +105,9 @@ class EmployeePolicy
     {
         return $user->can('reorder_employee');
     }
+
+    public function addTwg(User $user): bool
+    {
+        return $user->can('add_twg_employee');
+    }
 }

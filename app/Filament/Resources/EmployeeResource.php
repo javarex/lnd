@@ -6,6 +6,7 @@ use App\Filament\Resources\EmployeeResource\Pages;
 use App\Filament\Resources\EmployeeResource\RelationManagers;
 use App\Models\Employee;
 use App\Models\School;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -16,7 +17,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class EmployeeResource extends Resource
+class EmployeeResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Employee::class;
 
@@ -24,6 +25,13 @@ class EmployeeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    public static function getPermissionPrefixes(): array
+    {
+        $permissionPrefixes = [
+            'add_twg'
+        ];
+        return array_merge(config('filament-shield.permission_prefixes.resource'), $permissionPrefixes);
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -50,10 +58,16 @@ class EmployeeResource extends Resource
                     //     ->maxLength(255),
                     Forms\Components\Radio::make('employee_type')
                         ->label('Employee Type')
-                        ->options([
-                            'Teaching' => 'Teaching',
-                            'Non-teaching' => 'Non-teaching',
-                        ])
+                        ->options(function () {
+                            $types = [
+                                'Teaching' => 'Teaching',
+                                'Non-teaching' => 'Non-teaching',
+                            ];
+                            if(auth()->user()->can('addTwg', Employee::class)) {
+                               $types = array_merge($types, ['Division Employee' => 'Division Employee/TWG']);
+                            }
+                            return $types;
+                        })
                         ->required(),
                 ])
             ])
