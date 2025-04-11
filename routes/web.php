@@ -7,14 +7,14 @@ Route::get('/', function () {
     return redirect('/admin');
 });
 
-Route::get('report', function () {
-    $data = ['items' => \App\Models\CalendarOfTraining::with('participants.employee', 'training')->first()];
+Route::get('report/{id}', function ($id) {
+    $data = ['items' => \App\Models\CalendarOfTraining::with('participants.employee', 'training')->findOrFail($id)];
 //    return view('report', $data);
     $pdf = Pdf::loadView('report', $data)->setPaper('A4', 'landscape');
 
 //    dd($pdf);
     return $pdf->stream();
-});
+})->name('report');
 
 
 Route::get('test', function (){

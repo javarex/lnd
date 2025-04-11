@@ -53,6 +53,7 @@ class TrainingsWidget extends BaseWidget
             ])
 //            view('filament::components.icon', ['icon' => 'heroicon-o-arrow-down'])->render()
             ->actions([
+
                 ActionGroup::make([
                     Tables\Actions\Action::make('update_status')
                         ->label(fn($record) => $record->participants->count() == 0 ? 'Unable to update status' : 'Update Status')
@@ -69,7 +70,7 @@ class TrainingsWidget extends BaseWidget
                         ])
                         ->action(function($data, $record) {
                             try {
-    
+
                                 $record->status = $data['status'];
                                 $record->save();
                                 Notification::make()
@@ -87,15 +88,11 @@ class TrainingsWidget extends BaseWidget
                         ->disabled(fn($record) => $record->participants->count() == 0)
                         ->color(fn($record) => $record->participants->count() == 0 ?  'danger' : 'primary')
                         ->outlined(),
-                    Html2MediaAction::make('print')
-                        ->label('Certificates')
-                        ->icon('heroicon-o-printer')
+                    Tables\Actions\Action::make('print')
+                        ->label('Print Certificate')
                         ->color('success')
-                        ->orientation('portrait')
-                        ->format('a4', 'mm')
-                        ->content(function() {
-                            return view('filament.reports.certificate');
-                        }),
+                        ->icon('heroicon-o-printer')
+                        ->url(fn($record) => route('report', [$record->id]),shouldOpenInNewTab: true),
                 ]),
             ])
            ->poll(3)
