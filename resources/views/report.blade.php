@@ -126,7 +126,7 @@
 </head>
 <body>
 <div>
-    @foreach ($items->participants as $item)
+    @foreach ($users as $item)
         <div class="certificate-container">
             <div>
                 <div style="text-align: center;">
@@ -140,7 +140,7 @@
                 <div style="text-align: center;">
                     <h1 class="certificate-title">Certificate of Participation</h1>
                     <p class="mb-4 text-lg">is given to</p>
-                    <h2 class="participant-name">{{ $item->employee?->full_name }}</h2>
+                    <h2 class="participant-name">{{ $item['name'] }}</h2>
                     <p class="school">Golden Valley NHS</p>
                     <p class="description">
                         for her active participation during the conduct of
