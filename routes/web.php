@@ -8,8 +8,16 @@ Route::get('/', function () {
 });
 
 Route::get('report', function () {
-    $data = ['items' => \App\Models\CalendarOfTraining::all()];
-    $pdf = Pdf::loadView('report', $data);
+    $data = ['items' => \App\Models\CalendarOfTraining::with('participants.employee', 'training')->first()];
+//    return view('report', $data);
+    $pdf = Pdf::loadView('report', $data)->setPaper('A4', 'landscape');
+
+//    dd($pdf);
     return $pdf->stream();
-//    return $pdf->download('multi-page-report.pdf');
 });
+
+
+Route::get('test', function (){
+    return view('test');
+});
+
