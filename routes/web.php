@@ -54,6 +54,7 @@ Route::get('report/{id}', function ($id) {
         $zip->close();
     }
 
+
 // 6. Clean up temp folder
     File::deleteDirectory($directory);
 
