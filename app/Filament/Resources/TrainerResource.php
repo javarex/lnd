@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TrainingResource\Pages;
-use App\Filament\Resources\TrainingResource\RelationManagers;
-use App\Models\Training;
+use App\Filament\Resources\TrainerResource\Pages;
+use App\Filament\Resources\TrainerResource\RelationManagers;
+use App\Models\Trainer;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,33 +12,34 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 
-class TrainingResource extends Resource
+class TrainerResource extends Resource
 {
-    protected static ?string $model = Training::class;
+    protected static ?string $model = Trainer::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     protected static ?string $navigationGroup = 'Libraries';
-
-    protected static ?string $navigationLabel = 'Training Master List'; 
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('training_name')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+                Forms\Components\TextInput::make('trainers_name')
+                    ->required(),
+                Forms\Components\TextInput::make('affiliation')
+                    ->required(),
+            ])
+            ->columns(1);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('training_name')
+                Tables\Columns\TextColumn::make('trainers_name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('affiliation')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -72,9 +73,9 @@ class TrainingResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTrainings::route('/'),
-            'create' => Pages\CreateTraining::route('/create'),
-            'edit' => Pages\EditTraining::route('/{record}/edit'),
+            'index' => Pages\ListTrainers::route('/'),
+            // 'create' => Pages\CreateTrainer::route('/create'),
+            // 'edit' => Pages\EditTrainer::route('/{record}/edit'),
         ];
     }
 }

@@ -62,6 +62,7 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                             $types = [
                                 'Teaching' => 'Teaching',
                                 'Non-teaching' => 'Non-teaching',
+                                'Teaching Related / School Head' => 'Teaching Related / School Head',
                             ];
                             if(auth()->user()->can('addTwg', Employee::class)) {
                                $types = array_merge($types, ['Division Employee' => 'Division Employee/TWG']);

@@ -14,8 +14,10 @@ class UserFilterScope implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         $user = auth()->user();
-        if (!$user->isAdmin()) {
-            $builder->where('user_id', $user->id);
+        if (auth()->check()) {
+            if (!$user->isAdmin()) {
+                $builder->where('user_id', $user->id);
+            }
         }
     }
 }

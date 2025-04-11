@@ -49,7 +49,8 @@ class SchoolResource extends Resource
                     // ->getSearchResultsUsing(fn($search, Get $get) => Barangay::where('citymunCode', $get('citymunCode'))->pluck('brgyDesc', 'brgyCode'))
                     ->searchable()
                     ->required()
-            ]);
+            ])
+            ->columns(1);
     }
 
     public static function table(Table $table): Table
@@ -93,8 +94,8 @@ class SchoolResource extends Resource
     {
         return [
             'index' => Pages\ListSchools::route('/'),
-            'create' => Pages\CreateSchool::route('/create'),
-            'edit' => Pages\EditSchool::route('/{record}/edit'),
+            // 'create' => Pages\CreateSchool::route('/create'),
+            // 'edit' => Pages\EditSchool::route('/{record}/edit'),
         ];
     }
 }
