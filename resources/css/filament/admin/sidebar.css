@@ -1,0 +1,11 @@
+.fi-sidebar-nav-groups {
+    @apply gap-y-1;
+}
+
+.fi-sidebar-group-button {
+    @apply py-1;
+}
+
+.fi-sidebar-item-button {
+    @apply py-0.5;
+}

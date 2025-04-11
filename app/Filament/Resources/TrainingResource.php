@@ -22,6 +22,8 @@ class TrainingResource extends Resource
 
     protected static ?string $navigationGroup = 'Libraries';
 
+    protected static ?string $navigationLabel = 'Training Master List'; 
+
     public static function form(Form $form): Form
     {
         return $form

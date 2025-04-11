@@ -17,19 +17,20 @@ class TrainerResource extends Resource
 {
     protected static ?string $model = Trainer::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $navigationGroup = 'Libraries';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('trainers_name')
-                    ->required()
-                    ->maxLength(255),
+                    ->required(),
                 Forms\Components\TextInput::make('affiliation')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+                    ->required(),
+            ])
+            ->columns(1);
     }
 
     public static function table(Table $table): Table
@@ -73,8 +74,8 @@ class TrainerResource extends Resource
     {
         return [
             'index' => Pages\ListTrainers::route('/'),
-            'create' => Pages\CreateTrainer::route('/create'),
-            'edit' => Pages\EditTrainer::route('/{record}/edit'),
+            // 'create' => Pages\CreateTrainer::route('/create'),
+            // 'edit' => Pages\EditTrainer::route('/{record}/edit'),
         ];
     }
 }

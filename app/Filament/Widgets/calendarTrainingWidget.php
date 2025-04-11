@@ -25,7 +25,9 @@ use Filament\Forms\Components\DatePicker;
 use Guava\Calendar\ValueObjects\Resource;
 use Guava\Calendar\Widgets\CalendarWidget;
 use App\Filament\Resources\EmployeeResource;
+use App\Filament\Resources\TrainerResource;
 use App\Filament\Resources\TrainingResource;
+use Filament\Forms\Components\TagsInput;
 
 class calendarTrainingWidget extends CalendarWidget
 {
@@ -224,7 +226,31 @@ class calendarTrainingWidget extends CalendarWidget
                     TextInput::make('approved_credit_units')
                         ->required(),
                 ])
-                ->visible(fn($operation) => $operation === 'with_accreditation')
+                ->visible(fn($operation) => $operation === 'with_accreditation'),
+            Select::make('trainers')
+                ->multiple()
+                ->relationship(titleAttribute:'trainers_name')
+                ->preload()
+                ->createOptionForm(fn($form) => TrainerResource::form($form)),
+            Select::make('twg')
+                ->label('Technical Working Groups')
+                ->multiple()
+                ->relationship(titleAttribute:'full_name')
+                ->preload()
+                ->createOptionForm(fn($form) => EmployeeResource::form($form)),
+            // Repeater::make('twgTrainings')
+            //     ->relationship()
+            //     // ->relationship(modifyQueryUsing: fn($query) => $query->dd())
+            //     ->simple(
+            //         Select::make('employee_id')
+            //             ->relationship('employee', 'full_name')
+            //             ->searchable(['first_name', 'last_name'])
+            //             ->preload()
+            //             ->createOptionForm(fn($form) => EmployeeResource::form($form))
+            //     )
+            //     ->grid(2)
+            //     ->addActionLabel('Add Technical Working Group')
+            
         ];
 
         // If you have multiple model types on your calendar, you can return different schemas based on the $model property
