@@ -45,7 +45,7 @@ Route::get('report/{id}', function ($id) {
 
 
 // 5. Zip the files
-    $zipFile = storage_path("app/reports_" . now()->timestamp . ".zip"); 
+    $zipFile = storage_path("app/reports_" . now()->timestamp . ".zip");
     $zip = new ZipArchive;
 
     if ($zip->open($zipFile, ZipArchive::CREATE) === true) {
