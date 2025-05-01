@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Certificate of Participation</title>
+    <title>Certificate of Speaker</title>
 
     <style>
         @page {
@@ -152,7 +152,7 @@
                     </p>
 
                     <div class="signatory">
-                        <p>PHOEBE GAY L. REFAMONTE, CESO VI</p>
+                        <p>PHOEBE GAY L. REFAMONTE,CESO VI</p>
                         <p>OIC - Schools Division Superintendent</p>
                     </div>
                 </div>
