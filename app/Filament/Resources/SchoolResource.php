@@ -57,9 +57,16 @@ class SchoolResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('school_code')
+                    ->searchable()
+                    ->label('School ID'),
                 Tables\Columns\TextColumn::make('school')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('brgyCode')
+                Tables\Columns\TextColumn::make('purok')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('barangay')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('municipal')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -78,7 +85,7 @@ class SchoolResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

@@ -8,8 +8,8 @@ export default defineConfig({
             refresh: true,
         }),
     ],
-    server: {
-        host: true, // allows external access
-        cors: true
-    }
+    // server: {
+    //     host: true, // allows external access
+    //     cors: true
+    // }
 });
