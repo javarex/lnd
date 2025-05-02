@@ -84,6 +84,7 @@ Route::get('report/{id}', function ($id) {
 
 
 Route::get('test', function (){
-    return view('test');
+    return view('reportSpeaker');
 });
+
 

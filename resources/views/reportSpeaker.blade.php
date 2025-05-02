@@ -126,7 +126,7 @@
 </head>
 <body>
 <div>
-    @foreach ($users as $item)
+    {{-- @foreach ($users as $item) --}}
         <div class="certificate-container">
             <div>
                 <div style="text-align: center;">
@@ -140,19 +140,29 @@
                 <div style="text-align: center;">
                     <h1 class="certificate-title">Certificate of Participation</h1>
                     <p class="mb-4 text-lg">is given to</p>
-                    <h2 class="participant-name">{{ $item['name'] }}</h2>
+                    <h2 class="participant-name">{{ 'Sample' }}</h2>
                     <p class="school">Golden Valley NHS</p>
                     <p class="description">
                         for her/his active participation during the conduct of
-                        <span class="font-bold uppercase">{{$items->training?->training_name}}</span>
+                        <span class="font-bold uppercase">{{ 'Sample'}}</span>
                         held at The Ritz Hotel at Garden Oases, Porras St., Bo. Obrero, Davao City on December 1–6, 2023.
                     </p>
                     <p class="date">
                         Given this <strong>6<sup>th</sup> day of December 2023</strong> at The Ritz Hotel at Garden Oases, Davao City.
                     </p>
 
-                    <div class="signatory">
-                        <p>PHOEBE GAY L. REFAMONTE,CESO VI</p>
+                    <div class="signatory" style="position: relative; text-align: center; display: inline-block;">
+                        <img src="images/eSig.png" alt="eSignature" style="
+                            position: absolute;
+                            top: 0;
+                            left: 50%;
+                            transform: translate(-50%, -30%);
+                            width: 150px;
+                            height: 200px;
+                            opacity: 0.8;
+                            pointer-events: none;
+                        ">
+                        <p style="margin-top: 60px;">PHOEBE GAY L. REFAMONTE, CESO VI</p>
                         <p>OIC - Schools Division Superintendent</p>
                     </div>
                 </div>
@@ -192,7 +202,7 @@
         </div>
 
         <div style="page-break-after: always;"></div>
-    @endforeach
+    {{-- @endforeach --}}
 </div>
 </body>
 </html>

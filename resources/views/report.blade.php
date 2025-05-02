@@ -151,8 +151,18 @@
                         Given this <strong>6<sup>th</sup> day of December 2023</strong> at The Ritz Hotel at Garden Oases, Davao City.
                     </p>
 
-                    <div class="signatory">
-                        <p>PHOEBE GAY L. REFAMONTE, CESO VI</p>
+                    <div class="signatory" style="position: relative; text-align: center; display: inline-block;">
+                        <img src="images/eSig.png" alt="eSignature" style="
+                            position: absolute;
+                            top: 0;
+                            left: 50%;
+                            transform: translate(-50%, -30%);
+                            width: 150px;
+                            height: 200px;
+                            opacity: 0.8;
+                            pointer-events: none;
+                        ">
+                        <p style="margin-top: 60px;">PHOEBE GAY L. REFAMONTE, CESO VI</p>
                         <p>OIC - Schools Division Superintendent</p>
                     </div>
                 </div>
