@@ -126,7 +126,7 @@
 </head>
 <body>
 <div>
-    {{-- @foreach ($users as $item) --}}
+    @foreach ($users as $item)
         <div class="certificate-container">
             <div>
                 <div style="text-align: center;">
@@ -202,7 +202,7 @@
         </div>
 
         <div style="page-break-after: always;"></div>
-    {{-- @endforeach --}}
+    @endforeach
 </div>
 </body>
 </html>
