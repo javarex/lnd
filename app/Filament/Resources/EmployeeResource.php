@@ -7,6 +7,7 @@ use App\Filament\Resources\EmployeeResource\RelationManagers;
 use App\Models\Employee;
 use App\Models\School;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Actions\StaticAction;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -52,7 +53,10 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                         ->getOptionLabelsUsing(fn ($value) => School::find($value)->school)
                         ->preload()
                         ->searchable()
-                        ->createOptionForm(fn(Form $form) => SchoolResource::form($form)),
+                        ->createOptionForm(fn(Form $form) => SchoolResource::form($form))
+                        ->createOptionAction(function(StaticAction $action) {
+                            return $action->modalHeading('Create new school');
+                        }),
                     // Forms\Components\TextInput::make('school')
                     //     ->required()
                     //     ->maxLength(255),
@@ -62,10 +66,10 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                             $types = [
                                 'Teaching' => 'Teaching',
                                 'Non-teaching' => 'Non-teaching',
-                                'Teaching Related / School Head' => 'Teaching Related / School Head',
+                                'Teaching Related / School Head' => 'Teaching Related / School Head'
                             ];
                             if(auth()->user()->can('addTwg', Employee::class)) {
-                               $types = array_merge($types, ['Division Employee' => 'Division Employee/TWG']);
+                               $types = array_merge($types, ['TWG' => 'Technical Working Group', 'Division Employee' => 'Division Employee']);
                             }
                             return $types;
                         })
@@ -80,13 +84,11 @@ class EmployeeResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('first_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('middle_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('last_name')
+                Tables\Columns\TextColumn::make('full_name')
+                    ->label('Name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('school.school')
+                    ->placeholder('Not Applicable')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('employee_type')
                     ->searchable(),

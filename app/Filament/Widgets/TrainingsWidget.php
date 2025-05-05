@@ -7,6 +7,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use App\Models\CalendarOfTraining;
+use Filament\Actions\StaticAction;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
@@ -16,20 +17,21 @@ use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Tables\Actions\ActionGroup;
 use App\Filament\Resources\VenueResource;
 use Filament\Forms\Components\DatePicker;
 use App\Filament\Resources\EmployeeResource;
 use App\Filament\Resources\TrainingResource;
 use Filament\Widgets\TableWidget as BaseWidget;
 use App\Filament\Widgets\calendarTrainingWidget;
-use Filament\Actions\StaticAction;
-use Filament\Forms\Components\Actions\Action as ActionsAction;
-use Filament\Tables\Actions\Action as TablesActionsAction;
-use Filament\Tables\Actions\ActionGroup;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
+use Filament\Tables\Actions\Action as TablesActionsAction;
+use Filament\Forms\Components\Actions\Action as ActionsAction;
 
 class TrainingsWidget extends BaseWidget
 {
+    use HasWidgetShield;
     public function table(Table $table): Table
     {
         return $table

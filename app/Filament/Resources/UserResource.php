@@ -4,8 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\Employee;
+use App\Models\School;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -26,26 +29,42 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('username')
-                    ->required()
-                    ->maxLength(50),
+                Grid::make([
+                    'xl' => 2,
+                    'default' => 1
+                ])
+                ->schema([
+                    Forms\Components\TextInput::make('name')
+                        ->datalist(fn() => Employee::select('full_name')->distinct('fullname')->get()->pluck('full_name'))
+                        ->autocomplete(false)
+                        ->required()
+                        ->maxLength(255),
+                    Forms\Components\Select::make('school_id')
+                        ->label('school')
+                        ->getSearchResultsUsing(fn($search) => School::where('school', 'like', "%$search%")->get()->pluck('school', 'id'))
+                        ->searchable()
+                ]),
+                Grid::make([
+                    'xl' => 2,
+                    'default' => 1
+                ])
+                ->schema([
+                    Forms\Components\TextInput::make('username')
+                        ->required()
+                        ->maxLength(50),
+                    Forms\Components\TextInput::make('password')
+                        ->dehydrated(fn($operation, $state) => $operation === 'create' || ($state !== null && strtolower($operation) === 'edit'))
+                        ->required(fn($operation) => strtolower($operation) === 'create')
+                        ->password()
+                        ->maxLength(255),
+                ]),
                 Forms\Components\CheckboxList::make('roles')
                     ->relationship('roles', 'name')
                     ->searchable(),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
-                    ->dehydrated(fn($operation, $state) => $operation === 'create' || ($state !== null && strtolower($operation) === 'edit'))
-                    ->required(fn($operation) => strtolower($operation) === 'create')
-                    ->password()
-                    ->maxLength(255),
-            ]);
+                
+            ])
+            ->columns(1)
+            ->extraAttributes(['class' => 'w-1/2']);
     }
 
     public static function table(Table $table): Table

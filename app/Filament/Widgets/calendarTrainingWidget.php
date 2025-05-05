@@ -7,30 +7,26 @@ use Carbon\Carbon;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Actions\Action;
-use Filament\Widgets\Widget;
 use App\Models\CalendarOfTraining;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use Guava\Calendar\Actions\EditAction;
-use Guava\Calendar\ValueObjects\Event;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Guava\Calendar\Actions\CreateAction;
 use App\Filament\Resources\VenueResource;
 use Filament\Forms\Components\DatePicker;
-use Guava\Calendar\ValueObjects\Resource;
 use Guava\Calendar\Widgets\CalendarWidget;
 use App\Filament\Resources\EmployeeResource;
 use App\Filament\Resources\TrainerResource;
 use App\Filament\Resources\TrainingResource;
-use Filament\Forms\Components\TagsInput;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 
 class calendarTrainingWidget extends CalendarWidget
 {
+    use HasWidgetShield;
     // protected static string $view = 'filament.widgets.calendar-training-widget';
     protected bool $eventClickEnabled = true;
     protected bool $dateClickEnabled = true;
@@ -237,7 +233,7 @@ class calendarTrainingWidget extends CalendarWidget
                 ->multiple()
                 ->relationship(titleAttribute:'full_name')
                 ->preload()
-                ->createOptionForm(fn($form) => EmployeeResource::form($form)),
+                ->createOptionForm(fn($form) => EmployeeResource::form($form))
             // Repeater::make('twgTrainings')
             //     ->relationship()
             //     // ->relationship(modifyQueryUsing: fn($query) => $query->dd())

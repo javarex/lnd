@@ -30,25 +30,34 @@ class SchoolResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\TextInput::make('school_code')
+                    ->label('School ID')
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('school')
                     ->required()
                     ->maxLength(255),
-                Select::make('citymunCode')
-                    ->label('Municipal')
-                    ->getSearchResultsUsing(fn($search) => Municipal::where('citymunDesc', 'like', "%$search%")->pluck('citymunDesc', 'citymunCode'))
-                    ->getOptionLabelUsing(fn(Get $get, $value) => Municipal::findOrFail($value)->citymunDesc)
-                    // ->afterStateHydrated(fn($state) => dd($state))
-                    // ->getOptionLabelUsing(fn($value) => ('test'))
+                Forms\Components\Select::make('district')
+                    ->options(fn() => School::select('district')->distinct()->get()->pluck('district', 'district'))
+                    ->searchable(),
+                Forms\Components\Select::make('municipality')
+                    ->options(fn($get) => School::select('municipality')
+                                                ->where('district', $get('district'))
+                                                ->distinct()
+                                                ->get()
+                                                ->pluck('municipality', 'municipality')
+                    )
                     ->searchable()
                     ->required(),
-                Select::make('brgyCode')
-                    ->label('Barangay')
-                    ->options(fn(Get $get) => Barangay::where('citymunCode', $get('citymunCode'))->pluck('brgyDesc', 'brgyCode'))
-                    ->getOptionLabelUsing(fn($value) => Barangay::findOrFail($value)->brgyDesc)
-                    // ->afterStateHydrated(fn($record, Set $set) => $set('citymunCode', $record->load('barangay')->citymunCode))
-                    // ->getSearchResultsUsing(fn($search, Get $get) => Barangay::where('citymunCode', $get('citymunCode'))->pluck('brgyDesc', 'brgyCode'))
+                Forms\Components\Select::make('barangay')
+                    ->options(fn($get) => School::select('barangay')
+                                                ->where('municipality', $get('municipality'))
+                                                ->distinct()
+                                                ->get()
+                                                ->pluck('barangay', 'barangay')
+                    )
                     ->searchable()
-                    ->required()
+                    ->required(),
             ])
             ->columns(1);
     }
@@ -61,6 +70,8 @@ class SchoolResource extends Resource
                     ->searchable()
                     ->label('School ID'),
                 Tables\Columns\TextColumn::make('school')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('district')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('purok')
                     ->searchable(),

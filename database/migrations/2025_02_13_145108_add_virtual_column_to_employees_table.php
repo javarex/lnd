@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('employees', function (Blueprint $table) {
             $table->string('full_name', 135)
-                ->virtualAs('CONCAT(last_name, ", ", first_name, " ", IF(middle_name IS NULL, "", concat( LEFT(middle_name, 1), ".")))')
+                ->virtualAs('CONCAT(first_name, " ", IF(middle_name IS NULL, "", concat( LEFT(middle_name, 1), ". ")), last_name, " ")')
                 ->after('last_name');
         });
     }
