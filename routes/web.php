@@ -12,79 +12,80 @@ Route::get('/', function () {
     return redirect('/admin');
 });
 
-Route::get('report/{id}', function ($id) {
 
-    // 1. Generate fake data
-    $faker = \Faker\Factory::create();
+// Route::get('report/{id}', function ($id) {
 
-    $fakeUsers = collect(range(1, 1000))->map(function () use ($faker) {
-        return fluent([
-            'name' => $faker->name,
-            'email' => $faker->unique()->safeEmail,
-            'address' => $faker->address,
-        ]);
-    });
+//     // 1. Generate fake data
+//     $faker = \Faker\Factory::create();
 
-// 2. Chunk the collection (e.g., 50 per PDF)
-    $chunks = $fakeUsers->chunk(100);
+//     $fakeUsers = collect(range(1, 1000))->map(function () use ($faker) {
+//         return fluent([
+//             'name' => $faker->name,
+//             'email' => $faker->unique()->safeEmail,
+//             'address' => $faker->address,
+//         ]);
+//     });
 
-// 3. Folder to store temporary PDFs
-    $directory = storage_path('app/temp_pdfs_' . Str::random(6));
-    File::makeDirectory($directory);
+// // 2. Chunk the collection (e.g., 50 per PDF)
+//     $chunks = $fakeUsers->chunk(100);
 
-// 4. Generate each PDF and store
-    foreach ($chunks as $index => $chunk) {
-        $data = [
-            'items' => \App\Models\CalendarOfTraining::with('participants.employee', 'training')->findOrFail($id),
-            'users' => $chunk,
-        ];
+// // 3. Folder to store temporary PDFs
+//     $directory = storage_path('app/temp_pdfs_' . Str::random(6));
+//     File::makeDirectory($directory);
 
-        $pdf = Pdf::loadView('report', $data)->setPaper('A4', 'landscape');
-        $pdf->save("$directory/report_page_" . ($index + 1) . ".pdf");
-    }
+// // 4. Generate each PDF and store
+//     foreach ($chunks as $index => $chunk) {
+//         $data = [
+//             'items' => \App\Models\CalendarOfTraining::with('participants.employee', 'training')->findOrFail($id),
+//             'users' => $chunk,
+//         ];
 
-
-// 5. Zip the files
-    $zipFile = storage_path("app/reports_" . now()->timestamp . ".zip");
-    $zip = new ZipArchive;
-
-    if ($zip->open($zipFile, ZipArchive::CREATE) === true) {
-        foreach (File::files($directory) as $file) {
-            $zip->addFile($file->getRealPath(), $file->getFilename());
-        }
-        $zip->close();
-    }
+//         $pdf = Pdf::loadView('report', $data)->setPaper('A4', 'landscape');
+//         $pdf->save("$directory/report_page_" . ($index + 1) . ".pdf");
+//     }
 
 
-// 6. Clean up temp folder
-    File::deleteDirectory($directory);
+// // 5. Zip the files
+//     $zipFile = storage_path("app/reports_" . now()->timestamp . ".zip"); 
+//     $zip = new ZipArchive;
 
-// 7. Return the zipped file for download
-    return response()->download($zipFile)->deleteFileAfterSend(true);
-
-//
-//    $faker = \Faker\Factory::create();
-//
-//    $fakeUsers = collect(range(1, 400))->map(function () use ($faker) {
-//        return fluent([
-//            'name' => $faker->name,
-//            'email' => $faker->unique()->safeEmail,
-//            'address' => $faker->address,
-//        ]);
-//    });
-//
-//    $data = ['items' => \App\Models\CalendarOfTraining::with('participants.employee', 'training')->findOrFail($id), 'users' => $fakeUsers];
-//
-//    $pdf = Pdf::loadView('report', $data)->setPaper('A4', 'landscape');
-//
-//
-////    dd($pdf);
-//    return $pdf->download('certs.pdf');
-})->name('report');
+//     if ($zip->open($zipFile, ZipArchive::CREATE) === true) {
+//         foreach (File::files($directory) as $file) {
+//             $zip->addFile($file->getRealPath(), $file->getFilename());
+//         }
+//         $zip->close();
+//     }
 
 
-Route::get('test', function (){
-    return view('reportSpeaker');
-});
+// // 6. Clean up temp folder
+//     File::deleteDirectory($directory);
+
+// // 7. Return the zipped file for download
+//     return response()->download($zipFile)->deleteFileAfterSend(true);
+
+// //
+// //    $faker = \Faker\Factory::create();
+// //
+// //    $fakeUsers = collect(range(1, 400))->map(function () use ($faker) {
+// //        return fluent([
+// //            'name' => $faker->name,
+// //            'email' => $faker->unique()->safeEmail,
+// //            'address' => $faker->address,
+// //        ]);
+// //    });
+// //
+// //    $data = ['items' => \App\Models\CalendarOfTraining::with('participants.employee', 'training')->findOrFail($id), 'users' => $fakeUsers];
+// //
+// //    $pdf = Pdf::loadView('report', $data)->setPaper('A4', 'landscape');
+// //
+// //
+// ////    dd($pdf);
+// //    return $pdf->download('certs.pdf');
+// })->name('report');
+
+
+// Route::get('test', function (){
+//     return view('test');
+// });
 
 

@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('schools', function (Blueprint $table) {
             $table->id();
-            $table->string('school');
-            $table->string('brgyCode', 30);
-            $table->string('citymunCode', 20);
+            $table->string('no')->nullable();
+            $table->string('school')->nullable();
+            $table->string('school_code')->nullable();
+            $table->string('district')->nullable();
+            $table->string('purok')->nullable();
+            $table->string('barangay')->nullable();
+            $table->string('municipality')->nullable();
             $table->timestamps();
         });
     }
