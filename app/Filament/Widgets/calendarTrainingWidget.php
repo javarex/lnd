@@ -134,7 +134,12 @@ class calendarTrainingWidget extends CalendarWidget
                         ->relationship()
                         ->simple(
                             Select::make('employee_id')
-                                ->relationship('employee', 'full_name')
+                                ->relationship(
+                                    'employee', 
+                                    'full_name',
+                                    function($query) {
+                                        $query->whereNotIn('employee_type', ['TWG', 'Division Employee']);
+                                    })
                                 ->preload()
                                 ->searchable()
                                 ->createOptionForm(fn(Form $form) => EmployeeResource::form($form)->extraAttributes(['class' => 'w-full']))

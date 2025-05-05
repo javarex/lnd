@@ -15,7 +15,7 @@
             padding: 0;
         }
         .certificate-container {
-            border: 1px solid #cbd5e1; /* Tailwind's gray-400 */
+            /* border: 1px solid #cbd5e1; Tailwind's gray-400 */
             padding: 2.5rem;
             /*text-align: center;*/
             /*box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);*/
@@ -126,11 +126,11 @@
 </head>
 <body>
 <div>
-    @foreach ($users as $item)
+    @foreach ($participants as $item)
         <div class="certificate-container">
             <div>
                 <div style="text-align: center;">
-                    <img src="images/DepEd.png" alt="DepEd Logo" width="100">
+                    <img src="{{public_path('images/DepEd.png')}}" alt="DepEd Logo" width="100">
                     <p class="text-gray uppercase">Republic of the Philippines</p>
                     <p class="text-gray">Department of Education</p>
                     <p class="text-gray">Region XI</p>
@@ -140,19 +140,19 @@
                 <div style="text-align: center;">
                     <h1 class="certificate-title">Certificate of Participation</h1>
                     <p class="mb-4 text-lg">is given to</p>
-                    <h2 class="participant-name">{{ $item['name'] }}</h2>
+                    <h2 class="participant-name">{{ $item->full_name }}</h2>
                     <p class="school">Golden Valley NHS</p>
                     <p class="description">
                         for her/his active participation during the conduct of
-                        <span class="font-bold uppercase">{{$items->training?->training_name}}</span>
-                        held at The Ritz Hotel at Garden Oases, Porras St., Bo. Obrero, Davao City on December 1–6, 2023.
+                        <span class="font-bold uppercase">{{$item->training_name}}</span>
+                        held at The {{$item->venue}}, Davao City on December 1–6, 2023.
                     </p>
                     <p class="date">
-                        Given this <strong>6<sup>th</sup> day of December 2023</strong> at The Ritz Hotel at Garden Oases, Davao City.
+                        Given this <strong>{{$item->end_day}} day of December 2023</strong> at The {{$item->venue}}.
                     </p>
 
                     <div class="signatory" style="position: relative; text-align: center; display: inline-block;">
-                        <img src="images/eSig.png" alt="eSignature" style="
+                        <img src="{{public_path('images/eSig.png')}}" alt="eSignature" style="
                             position: absolute;
                             top: 0;
                             left: 50%;
@@ -173,7 +173,7 @@
 
                 <div class="footer">
                     <div class="left" style="display: inline-block">
-                        <img src="images/deped_division.jpeg" alt="DepEd Logo" style="display: inline-block">
+                        <img src="{{public_path('images/deped_division.jpeg')}}" alt="DepEd Logo" style="display: inline-block">
                         <div style="display: inline-block">
                             <p><strong>Address:</strong> Capitol Complex, Brgy. Cabidianan, Nabunturan, Davao de Oro</p>
                             <p><strong>Contact No.:</strong> 0951-387-1728 (TNT); 0999-935-5399 (Smart)</p>
