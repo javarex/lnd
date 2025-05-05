@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Certificate of Participation</title>
+    <title>Certificate of Speaker</title>
 
     <style>
         @page {
@@ -140,11 +140,11 @@
                 <div style="text-align: center;">
                     <h1 class="certificate-title">Certificate of Participation</h1>
                     <p class="mb-4 text-lg">is given to</p>
-                    <h2 class="participant-name">{{ $item['name'] }}</h2>
+                    <h2 class="participant-name">{{ 'Sample' }}</h2>
                     <p class="school">Golden Valley NHS</p>
                     <p class="description">
                         for her/his active participation during the conduct of
-                        <span class="font-bold uppercase">{{$items->training?->training_name}}</span>
+                        <span class="font-bold uppercase">{{ 'Sample'}}</span>
                         held at The Ritz Hotel at Garden Oases, Porras St., Bo. Obrero, Davao City on December 1–6, 2023.
                     </p>
                     <p class="date">

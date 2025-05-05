@@ -12,6 +12,7 @@ Route::get('/', function () {
     return redirect('/admin');
 });
 
+
 // Route::get('report/{id}', function ($id) {
 
 //     // 1. Generate fake data
@@ -86,4 +87,5 @@ Route::get('/', function () {
 // Route::get('test', function (){
 //     return view('test');
 // });
+
 
