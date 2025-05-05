@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Certificate of Participation</title>
+    <title>Certificate of Speaker</title>
 
     <style>
         @page {
