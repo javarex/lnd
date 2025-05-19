@@ -22,6 +22,13 @@ class Employee extends Model
     //     'employee_type',
     // ];
 
+    protected function casts(): array
+    {
+        return [
+            'employee_type' => 'array'
+        ];
+    }
+
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class, 'school_id');

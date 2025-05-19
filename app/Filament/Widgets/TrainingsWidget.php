@@ -90,11 +90,13 @@ class TrainingsWidget extends BaseWidget
                         ->disabled(fn($record) => $record->participants->count() == 0)
                         ->color(fn($record) => $record->participants->count() == 0 ?  'danger' : 'primary')
                         ->outlined(),
-                    Tables\Actions\Action::make('print')
-                        ->label('Print Certificate')
+                    Tables\Actions\Action::make('print_participation')
+                        ->label('Download CP')
+                        ->tooltip('Certificate of pariticipation')
                         ->color('success')
-                        ->icon('heroicon-o-printer')
+                        ->icon('heroicon-o-arrow-down-on-square-stack')
                         ->url(fn($record) => route('report', [$record->id]),shouldOpenInNewTab: true),
+                    
                 ]),
             ])
            ->poll(3)

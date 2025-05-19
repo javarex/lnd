@@ -77,7 +77,7 @@ class SchoolResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('barangay')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('municipal')
+                Tables\Columns\TextColumn::make('municipality')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

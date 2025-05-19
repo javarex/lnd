@@ -60,7 +60,7 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                     // Forms\Components\TextInput::make('school')
                     //     ->required()
                     //     ->maxLength(255),
-                    Forms\Components\Radio::make('employee_type')
+                    Forms\Components\CheckboxList::make('employee_type')
                         ->label('Employee Type')
                         ->options(function () {
                             $types = [
