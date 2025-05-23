@@ -85,7 +85,7 @@ Route::get('report1/{id}', function ($id) {
 })->name('report1');
 
 Route::get('report/{id}', [ReportController::class, 'participantCerts'])->name('report');
-
+Route::get('report-multiple', [ReportController::class, 'downloadSchoolCerts'])->name('download.school.certs');
 
 Route::get('test', function (){
     return view('test');

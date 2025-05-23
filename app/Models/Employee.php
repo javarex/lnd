@@ -34,6 +34,11 @@ class Employee extends Model
         return $this->belongsTo(School::class, 'school_id');
     }
 
+    public function trainings(): BelongsToMany
+    {
+        return $this->belongsToMany(CalendarOfTraining::class, 'participants');
+    }
+
     public function twgTrainings(): HasMany
     {
         return $this->hasMany(TwgTraining::class);

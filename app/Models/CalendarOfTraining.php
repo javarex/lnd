@@ -27,21 +27,21 @@ class CalendarOfTraining extends Model implements Eventable
         'status' => StatusEnum::class,
     ];
 
-    public function toEvent(): Event|array {
-        return Event::make($this)
-            ->action('edit')
-            ->title($this->training?->training_name)
-            ->start($this->start_date)
-            ->end($this->end_date)
-            // ->end(dd($this->end_date))
-            ->extendedProp('participants', $this->participants()->count())
-            ->extendedProp('with_accreditation', $this->accreditation_number !== null)
-            ->styles([
-                'color: black' => true,
-                'background-color' => $this->accreditation_number ? '#b37820' : '#ffff00', // Directly applies the background color
-                'font-size: 12px'
-            ]);
-    }
+    // public function toEvent(): Event|array {
+    //     return Event::make($this)
+    //         ->action('edit')
+    //         ->title($this->training?->training_name)
+    //         ->start($this->start_date)
+    //         ->end($this->end_date)
+    //         // ->end(dd($this->end_date))
+    //         ->extendedProp('participants', $this->participants()->count())
+    //         ->extendedProp('with_accreditation', $this->accreditation_number !== null)
+    //         ->styles([
+    //             'color: black' => true,
+    //             'background-color' => $this->accreditation_number ? '#b37820' : '#ffff00', // Directly applies the background color
+    //             'font-size: 12px'
+    //         ]);
+    // }
 
     public function toCalendarEvent(): CalendarEvent|array {
         return CalendarEvent::make($this)

@@ -105,6 +105,7 @@ class CalendarOfTrainingResource extends Resource
             'index' => Pages\ListCalendarOfTrainings::route('/'),
             'create' => Pages\CreateCalendarOfTraining::route('/create'),
             'edit' => Pages\EditCalendarOfTraining::route('/{record}/edit'),
+            'school' => Pages\CertificateOfParticipation::route('/{record}/schools')
         ];
     }
 }

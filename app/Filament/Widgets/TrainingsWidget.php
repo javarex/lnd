@@ -96,6 +96,9 @@ class TrainingsWidget extends BaseWidget
                         ->color('success')
                         ->icon('heroicon-o-arrow-down-on-square-stack')
                         ->url(fn($record) => route('report', [$record->id]),shouldOpenInNewTab: true),
+                    Tables\Actions\Action::make('export report')
+                        ->icon('heroicon-o-arrow-down-on-square-stack')
+                        ->url(fn($record) => route('filament.admin.resources.calendar-of-trainings.school', [$record]))
                     
                 ]),
             ])

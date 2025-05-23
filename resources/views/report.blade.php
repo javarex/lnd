@@ -145,10 +145,10 @@
                     <p class="description">
                         for her/his active participation during the conduct of
                         <span class="font-bold uppercase">{{$item->training_name}}</span>
-                        held at The {{$item->venue}}, Davao City on December 1–6, 2023.
+                        held at The {{$item->venue}}, Davao City on {{$item->date}}.
                     </p>
                     <p class="date">
-                        Given this <strong>{{$item->end_day}} day of December 2023</strong> at The {{$item->venue}}.
+                        Given this <strong>{{$item->end_day}} day of {{$item->training_month}} {{$item->training_year}}</strong> at The {{$item->venue}}.
                     </p>
 
                     <div class="signatory" style="position: relative; text-align: center; display: inline-block;">

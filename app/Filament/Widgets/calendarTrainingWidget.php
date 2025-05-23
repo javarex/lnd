@@ -51,7 +51,6 @@ class calendarTrainingWidget extends CalendarWidget
 
     public function getEvents(array $fetchInfo = []): Collection | array
     {
-
         return collect()
                 ->push(
                     ...CalendarOfTraining::query()
@@ -162,14 +161,16 @@ class calendarTrainingWidget extends CalendarWidget
     public function getDateSelectContextMenuActions(): array
     {
         // dd(data_get($arguments, 'dateStr'));
+        // dd('test');
         return [
             CreateAction::make('without_accreditation')
                 ->label('New Program without Accreditation')
                 ->model(CalendarOfTraining::class)
                 ->mountUsing(fn ($arguments, $form) => $form->fill([
+                    // dd(data_get($arguments, 'startStr') ?? data_get($arguments, 'dateStr')),
                     'start_date' => data_get($arguments, 'startStr') ?? data_get($arguments, 'dateStr'),
                     // 'end_date' => data_get($arguments, 'endStr') ?? data_get($arguments, 'dateStr'),
-                    'end_date' => Carbon::parse(data_get($arguments, 'endStr') ?? data_get($arguments, 'dateStr'))->subDay(),
+                    'end_date' => data_get($arguments, 'endStr') ? Carbon::parse(data_get($arguments, 'endStr'))->subDay() : data_get($arguments, 'dateStr'),
                 ]))
                 ->mutateFormDataUsing(function(array $data) {
                     $data['user_id'] = auth()->id();
@@ -180,7 +181,7 @@ class calendarTrainingWidget extends CalendarWidget
                 ->model(CalendarOfTraining::class)
                 ->mountUsing(fn ($arguments, $form) => $form->fill([
                     'start_date' => data_get($arguments, 'startStr') ?? data_get($arguments, 'dateStr'),
-                    'end_date' => data_get($arguments, 'endStr') ?? data_get($arguments, 'dateStr'),
+                    'end_date' =>  data_get($arguments, 'endStr') ? Carbon::parse(data_get($arguments, 'endStr'))->subDay() : data_get($arguments, 'dateStr'),
                 ]))
                 ->mutateFormDataUsing(function(array $data) {
                     $data['user_id'] = auth()->id();
