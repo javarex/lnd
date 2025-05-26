@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Training;
 use ZipArchive;
 use Carbon\Month;
 use Illuminate\Http\Request;
@@ -57,6 +58,7 @@ class ReportController extends Controller
 
     public function downloadSchoolCerts(Request $request)
     {
+        $training = Training::whereHas('calendarOfTraining', fn($query) => $query->where('id', $request->training))->first();
         // dd($request->all());
         $schools = DB::table('participants')
                             ->selectRaw("
@@ -93,8 +95,9 @@ class ReportController extends Controller
 
         $pdfPaths = [];
 
+        
         foreach ($schools as $trainingId => $records) {
-            $fileName = "certificate_group_{$trainingId}.pdf";
+            $fileName = "$training->training_name - {$trainingId}.pdf";
 
             // Render your view with grouped records
             $pdf = SnappyPdf::loadView('report', ['participants' => $records])
@@ -110,7 +113,7 @@ class ReportController extends Controller
             $pdfPaths[] = $pdfPath;
         }
 
-        $zipFileName = 'certificates.zip';
+        $zipFileName = "certificates-$training->training_name.zip";
         $zipPath = storage_path("app/{$zipFileName}");
 
         $zip = new ZipArchive;
