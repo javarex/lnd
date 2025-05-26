@@ -69,16 +69,31 @@ class CertificateOfParticipation extends Page implements HasTable
                         // ->action(function($records, $action) {
                         //     dd($records->pluck('id')->toArray());
                         // })
-                        ->action(function ($records) {
-                            $ids = $records->pluck('id')->toArray();
+                        ->action(function ($records, $livewire) {
+                            $url = '';
+                            if ($records) {
+                                $ids = $records->pluck('id')->toArray();
+    
+                                $url = route('download.school.certs', [
+                                    'ids' => $ids,
+                                    'training' => $this->record->id
+                                ]);
+                            }
 
-                            $url = route('certificates.download', [
-                                'ids' => implode(',', $ids),
-                            ]);
-
-                            // Dispatch JS to open new tab
-                            $this->dispatchBrowserEvent('open-new-tab', ['url' => $url]);
+                            return redirect($url);
                         })
+                        ->url(function($records) {
+                            $url = '';
+                            if ($records) {
+                                $ids = $records->pluck('id')->toArray();
+    
+                                $url = route('download.school.certs', [
+                                    'ids' => implode(',', $ids),
+                                ]);
+                            }
+
+                            return $url;
+                        }, true)
                 ]);
     }
 
