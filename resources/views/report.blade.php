@@ -141,7 +141,7 @@
                     <h1 class="certificate-title">Certificate of Participation</h1>
                     <p class="mb-4 text-lg">is given to</p>
                     <h2 class="participant-name">{{ $item->full_name }}</h2>
-                    <p class="school">Golden Valley NHS</p>
+                    <p class="school">{{ $item->school }}</p>
                     <p class="description">
                         for her/his active participation during the conduct of
                         <span class="font-bold uppercase">{{$item->training_name}}</span>
