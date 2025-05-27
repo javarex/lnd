@@ -47,7 +47,7 @@ Route::get('report1/{id}', function ($id) {
 
 
 // 5. Zip the files
-    $zipFile = storage_path("app/reports_" . now()->timestamp . ".zip"); 
+    $zipFile = storage_path("app/reports_" . now()->timestamp . ".zip");
     $zip = new ZipArchive;
 
     if ($zip->open($zipFile, ZipArchive::CREATE) === true) {
@@ -88,7 +88,7 @@ Route::get('report/{id}', [ReportController::class, 'participantCerts'])->name('
 Route::get('report-multiple', [ReportController::class, 'downloadSchoolCerts'])->name('download.school.certs');
 
 Route::get('test', function (){
-    return view('test');
+    return view('report');
 });
 
 
