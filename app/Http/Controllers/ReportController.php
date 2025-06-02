@@ -26,10 +26,12 @@ class ReportController extends Controller
                                 year(ct.end_date) as training_year,
                                 month(ct.end_date) as training_month,
                                 day(ct.end_date) as end_day,
-                                day(ct.start_date) as start_day
+                                day(ct.start_date) as start_day,
+                                schools.school
                             ")
                             ->join('employees', 'employees.id', 'participants.employee_id')
                             ->join('calendar_of_trainings as ct', 'ct.id', 'participants.calendar_of_training_id')
+                            ->join('schools', 'employees.school_id', 'schools.id')
                             ->join('trainings as t', 't.id', 'ct.training_id')
                             ->join('venues as v', 'v.id', 'ct.venue_id')
                             ->where('calendar_of_training_id', $id)
@@ -52,7 +54,7 @@ class ReportController extends Controller
                         ->setOption('margin-bottom', 0)
                         ->setOption('margin-left', 0)
                         ->setPaper('a4', 'landscape');
-                        
+
         return $pdf->download('report.pdf');
     }
 
@@ -95,7 +97,7 @@ class ReportController extends Controller
 
         $pdfPaths = [];
 
-        
+
         foreach ($schools as $trainingId => $records) {
             $fileName = "$training->training_name - {$trainingId}.pdf";
 
@@ -137,7 +139,7 @@ class ReportController extends Controller
                         ->setOption('margin-bottom', 0)
                         ->setOption('margin-left', 0)
                         ->setPaper('a4', 'landscape');
-                        
+
         return $pdf->download('report.pdf');
     }
 }

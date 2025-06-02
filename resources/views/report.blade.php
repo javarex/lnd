@@ -141,28 +141,28 @@
                     <h1 class="certificate-title">Certificate of Participation</h1>
                     <p class="mb-4 text-lg">is given to</p>
                     <h2 class="participant-name">{{ $item->full_name }}</h2>
-                    <p class="school">Golden Valley NHS</p>
+                    <p class="school">{{ $item->school }}</p>
                     <p class="description">
                         for her/his active participation during the conduct of
                         <span class="font-bold uppercase">{{$item->training_name}}</span>
-                        held at The {{$item->venue}}, Davao City on {{$item->date}}.
+                        held at {{$item->venue}}, Davao City on {{$item->date}}.
                     </p>
                     <p class="date">
-                        Given this <strong>{{$item->end_day}} day of {{$item->training_month}} {{$item->training_year}}</strong> at The {{$item->venue}}.
+                        Given this <strong>{{$item->end_day}} day of {{$item->training_month}} {{$item->training_year}}</strong> at {{$item->venue}}.
                     </p>
 
                     <div class="signatory" style="position: relative; text-align: center; display: inline-block;">
                         <img src="{{public_path('images/eSig.png')}}" alt="eSignature" style="
                             position: absolute;
                             top: 0;
-                            left: 50%;
+                            left: 10%;
                             transform: translate(-50%, -30%);
                             width: 150px;
                             height: 200px;
                             opacity: 0.8;
                             pointer-events: none;
                         ">
-                        <p style="margin-top: 60px;">PHOEBE GAY L. REFAMONTE, CESO VI</p>
+                        <p style="margin-top: 85px;">PHOEBE GAY L. REFAMONTE, CESO VI</p>
                         <p>OIC - Schools Division Superintendent</p>
                     </div>
                 </div>
