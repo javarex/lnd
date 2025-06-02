@@ -145,7 +145,7 @@
                     <p class="description">
                         for her/his active participation during the conduct of
                         <span class="font-bold uppercase">{{$item->training_name}}</span>
-                        held at {{$item->venue}}, Davao City on {{$item->date}}.
+                        held at {{$item->venue}}, on {{$item->date}}.
                     </p>
                     <p class="date">
                         Given this <strong>{{$item->end_day}} day of {{$item->training_month}} {{$item->training_year}}</strong> at {{$item->venue}}.
