@@ -150,6 +150,12 @@
                     <p class="date">
                         Given this <strong>6<sup>th</sup> day of December 2023</strong> at The Ritz Hotel at Garden Oases, Davao City.
                     </p>
+                    <p class="date">
+                        With Program Accreditation Number <strong> 123456789 </strong>
+                    </p>
+                    <p class="date">
+                       and Approved Credit Units <strong> 30 </strong>
+                    </p>
 
                     <div class="signatory" style="position: relative; text-align: center; display: inline-block;">
                         <img src="images/eSig.png" alt="eSignature" style="
