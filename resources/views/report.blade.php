@@ -151,20 +151,14 @@
                         Given this <strong>{{$item->end_day}} day of {{$item->training_month}} {{$item->training_year}}</strong> at {{$item->venue}}.
                     </p>
 
-                    <div class="signatory" style="position: relative; text-align: center; display: inline-block;">
-                        <img src="{{public_path('images/eSig.png')}}" alt="eSignature" style="
-                            position: absolute;
-                            top: 0;
-                            left: 10%;
-                            transform: translate(-50%, -30%);
-                            width: 150px;
-                            height: 200px;
-                            opacity: 0.8;
-                            pointer-events: none;
+                    <div style="text-align: center; margin-top: 30px;">
+                        <img src="{{ public_path('images/Signature.png') }}" alt="eSignature" style="
+                            width: 300px;
+                            height: auto;
+                            opacity: 2;
                         ">
-                        <p style="margin-top: 85px;">PHOEBE GAY L. REFAMONTE, CESO VI</p>
-                        <p>OIC - Schools Division Superintendent</p>
                     </div>
+
                 </div>
 
 
