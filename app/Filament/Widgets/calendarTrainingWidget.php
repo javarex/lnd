@@ -234,6 +234,8 @@ class calendarTrainingWidget extends CalendarWidget
                 ->relationship(titleAttribute:'trainers_name')
                 ->preload()
                 ->createOptionForm(fn($form) => TrainerResource::form($form)),
+            TextInput::make('topic_discuss')
+                ->required(),
             Select::make('twg')
                 ->label('Technical Working Groups')
                 ->multiple()
