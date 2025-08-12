@@ -43,7 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
 //                Pages\Dashboard::class,
             ])
-            ->brandLogo(asset('images/lnd-logo.png'))
+            // ->brandLogo(asset('images/lnd-logo.png'))
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('15rem')
             ->brandLogoHeight(fn() => auth()->check() ? '4rem' : '7rem')

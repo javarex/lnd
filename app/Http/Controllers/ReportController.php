@@ -37,10 +37,11 @@ class ReportController extends Controller
                             ->where('calendar_of_training_id', $id)
                             ->get()
                             ->each(function($item) {
+                                $end_date_parsed = Carbon::parse($item->end_date);
                                 $start_date = Carbon::parse($item->start_date)->format('F j, Y');
-                                $end_date = Carbon::parse($item->end_date)->format('F j, Y');
+                                $end_date = $end_date_parsed->format('F j, Y');
                                 $item->end_day = Number::ordinal($item->end_day);
-                                $item->training_month = Month::fromNumber(5)->name;
+                                $item->training_month = Month::fromNumber($end_date_parsed->month)->name;
                                 $item->date = $start_date == $end_date ? $start_date : $start_date  .' - '. $end_date;
                                 return $item;
                             });
