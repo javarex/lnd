@@ -70,6 +70,7 @@ class calendarTrainingWidget extends CalendarWidget
             CalendarOfTraining::class => view('filament.components.calendar.events.training'),
         ];
     }
+    
 
     public function getDateClickContextMenuActions(): array
     {
@@ -108,47 +109,60 @@ class calendarTrainingWidget extends CalendarWidget
         // ];
     }
 
+    public function participantAction()
+    {
+        return Action::make('participants')
+                ->label('Participants')
+                ->icon('heroicon-o-users')
+                ->record(fn() => $this->getEventRecord())
+                ->action(fn($record) => redirect(route('filament.admin.resources.calendar-of-trainings.edit', [$this->getEventRecord()])));
+                // ->modal()
+                // ->slideOver()
+                // ->modalWidth('lg')
+                // ->modalHeading(function() {
+                //     $record = $this->getEventRecord();
+
+                //     return new HtmlString("
+                //                 <div>{$record->training?->training_name}</div>
+                //                 <div class='text-sm dark:text-gray-400 text-gray-700'>{$record->duration}</div>
+                //             ");
+                // })
+                // ->record(fn() => $this->getEventRecord())
+                // ->url(fn($record) => route('filament.admin.resources.calendar-of-trainings.edit', ['record' => $record?->getKey()]))
+                // ->form([
+                //     Repeater::make('participants')
+                //         ->relationship()
+                //         ->simple(
+                //             Select::make('employee_id')
+                //                 ->relationship(
+                //                     'employee', 
+                //                     'full_name',
+                //                     function($query) {
+                //                         $query->whereNotIn('employee_type', ['TWG', 'Division Employee']);
+                //                     })
+                //                 ->preload()
+                //                 ->searchable()
+                //                 ->createOptionForm(fn(Form $form) => EmployeeResource::form($form)->extraAttributes(['class' => 'w-full']))
+                //         ),
+                // ])
+                // ->fillForm(function($record, $data) {
+                //     $data['participants'] = $record->load('participants');
+                //     return $data;
+                // })
+    }
+
+    // public function onEventClick(array $info = [], ?string $action = null): void
+    // {
+    //     if ($action == 'participants') {
+    //         redirect(route('filament.admin.resources.calendar-of-trainings.edit', [$info['event']['extendedProps']['key']]));
+    //     }
+    // }
 
     public function getEventClickContextMenuActions(): array
     {
         return [
             $this->editAction(),
-            Action::make('participants')
-                ->label('Participants')
-                ->icon('heroicon-o-users')
-                ->modal()
-                ->slideOver()
-                ->modalWidth('lg')
-                ->modalHeading(function() {
-                    $record = $this->getEventRecord();
-
-                    return new HtmlString("
-                                <div>{$record->training?->training_name}</div>
-                                <div class='text-sm dark:text-gray-400 text-gray-700'>{$record->duration}</div>
-                            ");
-                })
-                ->record(fn() => $this->getEventRecord())
-                ->form([
-                    Repeater::make('participants')
-                        ->relationship()
-                        ->simple(
-                            Select::make('employee_id')
-                                ->relationship(
-                                    'employee', 
-                                    'full_name',
-                                    function($query) {
-                                        $query->whereNotIn('employee_type', ['TWG', 'Division Employee']);
-                                    })
-                                ->preload()
-                                ->searchable()
-                                ->createOptionForm(fn(Form $form) => EmployeeResource::form($form)->extraAttributes(['class' => 'w-full']))
-                        ),
-                ])
-                ->fillForm(function($record, $data) {
-                    $data['participants'] = $record->load('participants');
-                    return $data;
-                })
-
+            $this->participantAction(),
         ];
     }
 

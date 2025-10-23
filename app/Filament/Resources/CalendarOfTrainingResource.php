@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CalendarOfTrainingResource\Pages;
 use App\Filament\Resources\CalendarOfTrainingResource\RelationManagers;
+use App\Filament\Resources\CalendarOfTrainingResource\RelationManagers\ParticipantsRelationManager;
 use App\Models\CalendarOfTraining;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -24,26 +25,7 @@ class CalendarOfTrainingResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\Select::make('training_id')
-                    ->relationship('training', 'id')
-                    ->required(),
-                Forms\Components\Select::make('venue_id')
-                    ->relationship('venue', 'id')
-                    ->required(),
-                Forms\Components\DatePicker::make('start_date')
-                    ->required(),
-                Forms\Components\DatePicker::make('end_date'),
-                Forms\Components\TextInput::make('accreditation_number')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('approved_credit_units')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('user_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
-            ]);
+            ->schema([]);
     }
 
     public static function table(Table $table): Table
@@ -95,7 +77,7 @@ class CalendarOfTrainingResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ParticipantsRelationManager::class
         ];
     }
 
