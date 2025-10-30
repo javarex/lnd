@@ -91,15 +91,21 @@ class TrainingsWidget extends BaseWidget
                         ->color(fn($record) => $record->participants->count() == 0 ?  'danger' : 'primary')
                         ->outlined(),
                     Tables\Actions\Action::make('print_participation')
-                        ->label('Download CP')
+                        ->label('Download Certificate of Participation')
                         ->tooltip('Certificate of pariticipation')
                         ->color('success')
                         ->icon('heroicon-o-arrow-down-on-square-stack')
                         ->url(fn($record) => route('report', [$record->id]),shouldOpenInNewTab: true),
+                    Tables\Actions\Action::make('print_recognition_speaker')
+                        ->label('Download Certificate of Recognition')
+                        ->tooltip('Certificate of Recognition')
+                        ->color('success')
+                        ->icon('heroicon-o-arrow-down-on-square-stack')
+                        ->url(fn($record) => route('reportRecognition', [$record->id]),shouldOpenInNewTab: true),
                     Tables\Actions\Action::make('export report')
                         ->icon('heroicon-o-arrow-down-on-square-stack')
                         ->url(fn($record) => route('filament.admin.resources.calendar-of-trainings.school', [$record]))
-                    
+
                 ]),
             ])
            ->poll(3)

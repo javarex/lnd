@@ -126,7 +126,7 @@
 </head>
 <body>
 <div>
-    @foreach ($users as $item)
+    @foreach ($participants as $item)
         <div class="certificate-container">
             <div>
                 <div style="text-align: center;">
@@ -138,18 +138,19 @@
                 </div>
 
                 <div style="text-align: center;">
-                    <h1 class="certificate-title">Certificate of Participation</h1>
+                    <h1 class="certificate-title">Certificate of Recognition</h1>
                     <p class="mb-4 text-lg">is given to</p>
-                    <h2 class="participant-name">{{ 'Sample' }}</h2>
-                    <p class="school">Golden Valley NHS</p>
+                    <h2 class="participant-name">{{ $item->trainers_name  }}</h2>
+                    <p class="school">{{ $item->affiliation }}</p>
                     <p class="description">
-                        for her/his active participation during the conduct of
-                        <span class="font-bold uppercase">{{ 'Sample'}}</span>
-                        held at Ritz Hotel at Garden Oases, Porras St., Bo. Obrero, Davao City on December 1–6, 2023.
+                        As Learning Facilitator/Speaker of the topic titled <i> {{ $item->topic_discuss }} </i> during the conduct of
+                        <span class="font-bold uppercase">{{$item->training_name}}</span>
+                        held at {{$item->venue}}, on {{$item->date}}.
                     </p>
                     <p class="date">
-                        Given this <strong>6<sup>th</sup> day of December 2023</strong> at Ritz Hotel at Garden Oases, Davao City.
+                        Given this <strong>{{$item->end_day}} day of {{$item->training_month}} {{$item->training_year}}</strong> at {{$item->venue}}.
                     </p>
+
 
                     <div style="text-align: center; margin-top: 30px;">
                         <img src="{{ public_path('images/Signature.png') }}" alt="eSignature" style="
