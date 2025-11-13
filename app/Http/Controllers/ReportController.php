@@ -152,7 +152,7 @@ class ReportController extends Controller
                                 trainers.trainers_name,
                                 trainers.affiliation,
                                 t.training_name,
-                                v.venue,
+                                v.venue, 
                                 ct.end_date,
                                 ct.start_date,
                                 year(ct.end_date) as training_year,

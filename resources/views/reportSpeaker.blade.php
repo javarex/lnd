@@ -130,7 +130,7 @@
         <div class="certificate-container">
             <div>
                 <div style="text-align: center;">
-                    <img src="images/DepEd.png" alt="DepEd Logo" width="100">
+                    <img src="{{public_path('images/DepEd.png')}}" alt="DepEd Logo" width="100">
                     <p class="text-gray uppercase">Republic of the Philippines</p>
                     <p class="text-gray">Department of Education</p>
                     <p class="text-gray">Region XI</p>
@@ -167,7 +167,7 @@
 
                 <div class="footer">
                     <div class="left" style="display: inline-block">
-                        <img src="images/deped_division.jpeg" alt="DepEd Logo" style="display: inline-block">
+                        <img src="{{public_path('images/deped_division.jpeg')}}" alt="DepEd Logo" style="display: inline-block">
                         <div style="display: inline-block">
                             <p><strong>Address:</strong> Capitol Complex, Brgy. Cabidianan, Nabunturan, Davao de Oro</p>
                             <p><strong>Contact No.:</strong> 0951-387-1728 (TNT); 0999-935-5399 (Smart)</p>
