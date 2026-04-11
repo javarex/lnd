@@ -3,18 +3,18 @@
 namespace App\Models;
 
 use App\Enums\StatusEnum;
+use App\Models\Scopes\CalendarOfTraining\UserFilterScope;
 use App\Traits\HasDateFormat;
-use Guava\Calendar\ValueObjects\CalendarEvent;
-use Guava\Calendar\ValueObjects\Event;
 use Guava\Calendar\Contracts\Eventable;
-use Illuminate\Database\Eloquent\Model;
+use Guava\Calendar\ValueObjects\CalendarEvent;
+use Guava\Calendar\ValueObjects\FetchInfo;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Scopes\CalendarOfTraining\UserFilterScope;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[ScopedBy(UserFilterScope::class)]
 class CalendarOfTraining extends Model implements Eventable
@@ -43,7 +43,8 @@ class CalendarOfTraining extends Model implements Eventable
     //         ]);
     // }
 
-    public function toCalendarEvent(): CalendarEvent|array {
+    public function toCalendarEvent(): CalendarEvent
+    {
         return CalendarEvent::make($this)
             ->action('edit')
             ->title($this->training?->training_name)
@@ -55,16 +56,15 @@ class CalendarOfTraining extends Model implements Eventable
             ->styles([
                 'color: black' => true,
                 'background-color' => $this->accreditation_number ? '#b37820' : '#ffff00', // Directly applies the background color
-                'font-size: 12px'
+                'font-size: 12px',
             ]);
     }
 
     public function duration(): Attribute
     {
         return Attribute::make(
-            get: fn () =>
-                $this->longDate($this->start_date)
-                    .(!$this->isSameDate()
+            get: fn () => $this->longDate($this->start_date)
+                    .(! $this->isSameDate()
                         ? " - {$this->longDate($this->end_date)}"
                         : null)
         );
@@ -90,9 +90,9 @@ class CalendarOfTraining extends Model implements Eventable
         return $this->belongsTo(Venue::class);
     }
 
-    public function scopeDateBetween(Builder $query, array $fetchinfo)
+    public function scopeDateBetween(Builder $query, FetchInfo $fetchInfo): void
     {
-        $query->whereBetween('start_date', [$fetchinfo['start'], $fetchinfo['end']]);
+        $query->whereBetween('start_date', [$fetchInfo->start, $fetchInfo->end]);
     }
 
     public function twg(): BelongsToMany
@@ -114,5 +114,4 @@ class CalendarOfTraining extends Model implements Eventable
     {
         return $this->belongsToMany(Trainer::class, 'training_trainer');
     }
-
 }

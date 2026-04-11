@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Employee;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class EmployeePolicy
@@ -104,10 +104,5 @@ class EmployeePolicy
     public function reorder(User $user): bool
     {
         return $user->can('reorder_employee');
-    }
-
-    public function addTwg(User $user): bool
-    {
-        return $user->can('add_twg_employee');
     }
 }

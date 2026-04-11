@@ -1,7 +1,10 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
+@import '../../../../vendor/guava/calendar/resources/css/theme.css';
 @import './sidebar.css';
 
-@config 'tailwind.config.js';
+@source '../../../../app/Filament';
+@source '../../../../resources/views/filament';
+@source '../../../../vendor/guava/calendar/resources/**/*';
 
 .fi-sidebar {
     @apply dark:bg-gray-800;

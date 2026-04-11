@@ -2,39 +2,45 @@
 
 namespace App\Filament\Widgets;
 
-use Closure;
-use Carbon\Carbon;
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Actions\Action;
-use App\Models\CalendarOfTraining;
-use Illuminate\Support\Collection;
-use Illuminate\Support\HtmlString;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\TextInput;
-use Guava\Calendar\Actions\CreateAction;
-use App\Filament\Resources\VenueResource;
-use Filament\Forms\Components\DatePicker;
-use Guava\Calendar\Widgets\CalendarWidget;
 use App\Filament\Resources\EmployeeResource;
 use App\Filament\Resources\TrainerResource;
 use App\Filament\Resources\TrainingResource;
+use App\Filament\Resources\VenueResource;
+use App\Models\CalendarOfTraining;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
+use Carbon\Carbon;
+use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Schema;
+use Guava\Calendar\Filament\Actions\CreateAction;
+use Guava\Calendar\Filament\CalendarWidget;
+use Guava\Calendar\ValueObjects\FetchInfo;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
 
 class calendarTrainingWidget extends CalendarWidget
 {
     use HasWidgetShield;
+
     // protected static string $view = 'filament.widgets.calendar-training-widget';
     protected bool $eventClickEnabled = true;
+
     protected bool $dateClickEnabled = true;
+
     protected bool $dateSelectEnabled = true;
+
     protected bool $eventDragEnabled = true;
+
     protected ?string $locale = 'en';
-    protected string | Closure | HtmlString | null $heading = 'Calendar of trainings';
-    protected int | string | array $columnSpan = 1;
+
+    protected string|HtmlString|bool|null $heading = 'Calendar of trainings';
+
+    protected int|string|array $columnSpan = 1;
 
     public function authorize($ability, $arguments = [])
     {
@@ -49,30 +55,29 @@ class calendarTrainingWidget extends CalendarWidget
         ];
     }
 
-    public function getEvents(array $fetchInfo = []): Collection | array
+    protected function getEvents(FetchInfo $info): Collection|array|Builder
     {
         return collect()
-                ->push(
-                    ...CalendarOfTraining::query()
-                            ->dateBetween($fetchInfo)
-                            ->get()
-                            ->each(function($item) {
-                                $item->start_date = Carbon::parse($item->start_date)->endOfDay();
-                                $item->end_date = Carbon::parse($item->end_date)->endOfDay();
-                            })
-                );
+            ->push(
+                ...CalendarOfTraining::query()
+                    ->dateBetween($info)
+                    ->get()
+                    ->each(function ($item) {
+                        $item->start_date = Carbon::parse($item->start_date)->endOfDay();
+                        $item->end_date = Carbon::parse($item->end_date)->endOfDay();
+                    })
+            );
 
     }
 
-    public function getEventContent(): null | string | array
+    public function getEventContent(): null|string|array
     {
         return [
             CalendarOfTraining::class => view('filament.components.calendar.events.training'),
         ];
     }
-    
 
-    public function getDateClickContextMenuActions(): array
+    protected function getDateClickContextMenuActions(): array
     {
         return $this->getDateSelectContextMenuActions();
         // return [
@@ -112,43 +117,43 @@ class calendarTrainingWidget extends CalendarWidget
     public function participantAction()
     {
         return Action::make('participants')
-                ->label('Participants')
-                ->icon('heroicon-o-users')
-                ->record(fn() => $this->getEventRecord())
-                ->action(fn($record) => redirect(route('filament.admin.resources.calendar-of-trainings.edit', [$this->getEventRecord()])));
-                // ->modal()
-                // ->slideOver()
-                // ->modalWidth('lg')
-                // ->modalHeading(function() {
-                //     $record = $this->getEventRecord();
+            ->label('Participants')
+            ->icon('heroicon-o-users')
+            ->record(fn () => $this->getEventRecord())
+            ->action(fn ($record) => redirect(route('filament.admin.resources.calendar-of-trainings.edit', [$this->getEventRecord()])));
+        // ->modal()
+        // ->slideOver()
+        // ->modalWidth('lg')
+        // ->modalHeading(function() {
+        //     $record = $this->getEventRecord();
 
-                //     return new HtmlString("
-                //                 <div>{$record->training?->training_name}</div>
-                //                 <div class='text-sm dark:text-gray-400 text-gray-700'>{$record->duration}</div>
-                //             ");
-                // })
-                // ->record(fn() => $this->getEventRecord())
-                // ->url(fn($record) => route('filament.admin.resources.calendar-of-trainings.edit', ['record' => $record?->getKey()]))
-                // ->form([
-                //     Repeater::make('participants')
-                //         ->relationship()
-                //         ->simple(
-                //             Select::make('employee_id')
-                //                 ->relationship(
-                //                     'employee', 
-                //                     'full_name',
-                //                     function($query) {
-                //                         $query->whereNotIn('employee_type', ['TWG', 'Division Employee']);
-                //                     })
-                //                 ->preload()
-                //                 ->searchable()
-                //                 ->createOptionForm(fn(Form $form) => EmployeeResource::form($form)->extraAttributes(['class' => 'w-full']))
-                //         ),
-                // ])
-                // ->fillForm(function($record, $data) {
-                //     $data['participants'] = $record->load('participants');
-                //     return $data;
-                // })
+        //     return new HtmlString("
+        //                 <div>{$record->training?->training_name}</div>
+        //                 <div class='text-sm dark:text-gray-400 text-gray-700'>{$record->duration}</div>
+        //             ");
+        // })
+        // ->record(fn() => $this->getEventRecord())
+        // ->url(fn($record) => route('filament.admin.resources.calendar-of-trainings.edit', ['record' => $record?->getKey()]))
+        // ->form([
+        //     Repeater::make('participants')
+        //         ->relationship()
+        //         ->simple(
+        //             Select::make('employee_id')
+        //                 ->relationship(
+        //                     'employee',
+        //                     'full_name',
+        //                     function($query) {
+        //                         $query->whereNotIn('employee_type', ['TWG', 'Division Employee']);
+        //                     })
+        //                 ->preload()
+        //                 ->searchable()
+        //                 ->createOptionForm(fn(Schema $form) => EmployeeResource::form($form)->extraAttributes(['class' => 'w-full']))
+        //         ),
+        // ])
+        // ->fillForm(function($record, $data) {
+        //     $data['participants'] = $record->load('participants');
+        //     return $data;
+        // })
     }
 
     // public function onEventClick(array $info = [], ?string $action = null): void
@@ -158,7 +163,7 @@ class calendarTrainingWidget extends CalendarWidget
     //     }
     // }
 
-    public function getEventClickContextMenuActions(): array
+    protected function getEventClickContextMenuActions(): array
     {
         return [
             $this->editAction(),
@@ -168,11 +173,10 @@ class calendarTrainingWidget extends CalendarWidget
 
     public function getResourceLabelContent(): null|string|array
     {
-        return "asd";
+        return 'asd';
     }
 
-
-    public function getDateSelectContextMenuActions(): array
+    protected function getDateSelectContextMenuActions(): array
     {
         // dd(data_get($arguments, 'dateStr'));
         // dd('test');
@@ -186,8 +190,9 @@ class calendarTrainingWidget extends CalendarWidget
                     // 'end_date' => data_get($arguments, 'endStr') ?? data_get($arguments, 'dateStr'),
                     'end_date' => data_get($arguments, 'endStr') ? Carbon::parse(data_get($arguments, 'endStr'))->subDay() : data_get($arguments, 'dateStr'),
                 ]))
-                ->mutateFormDataUsing(function(array $data) {
+                ->mutateFormDataUsing(function (array $data) {
                     $data['user_id'] = auth()->id();
+
                     return $data;
                 }),
             CreateAction::make('with_accreditation')
@@ -195,19 +200,19 @@ class calendarTrainingWidget extends CalendarWidget
                 ->model(CalendarOfTraining::class)
                 ->mountUsing(fn ($arguments, $form) => $form->fill([
                     'start_date' => data_get($arguments, 'startStr') ?? data_get($arguments, 'dateStr'),
-                    'end_date' =>  data_get($arguments, 'endStr') ? Carbon::parse(data_get($arguments, 'endStr'))->subDay() : data_get($arguments, 'dateStr'),
+                    'end_date' => data_get($arguments, 'endStr') ? Carbon::parse(data_get($arguments, 'endStr'))->subDay() : data_get($arguments, 'dateStr'),
                 ]))
-                ->mutateFormDataUsing(function(array $data) {
+                ->mutateFormDataUsing(function (array $data) {
                     $data['user_id'] = auth()->id();
+
                     return $data;
                 }),
         ];
     }
 
-    public function getSchema(?string $model = null): ?array
+    public function schema(Schema $schema): Schema
     {
-        // If you only work with one model type, you can ignore the $model parameter and simply return a schema
-        return [
+        return $schema->schema([
             Grid::make(columns: 3)
                 ->schema([
                     Select::make('training_id')
@@ -217,8 +222,8 @@ class calendarTrainingWidget extends CalendarWidget
                         ->searchable()
                         ->relationship('training', 'training_name')
                         ->preload()
-                        ->createOptionForm(function(Form $form) {
-                            return TrainingResource::form($form);
+                        ->createOptionForm(function (Schema $form): array {
+                            return TrainingResource::form($form)->getComponents();
                         }),
                     Select::make('venue_id')
                         ->label('Venue')
@@ -226,14 +231,14 @@ class calendarTrainingWidget extends CalendarWidget
                         ->searchable()
                         ->relationship('venue', 'venue')
                         ->preload()
-                        ->createOptionForm(function(Form $form) {
-                            return VenueResource::form($form);
+                        ->createOptionForm(function (Schema $form): array {
+                            return VenueResource::form($form)->getComponents();
                         }),
-                    ]),
+                ]),
             Fieldset::make('Schedule')
                 ->schema([
                     DatePicker::make('start_date'),
-                    DatePicker::make('end_date')
+                    DatePicker::make('end_date'),
                 ]),
             Fieldset::make('Accreditation')
                 ->schema([
@@ -242,20 +247,20 @@ class calendarTrainingWidget extends CalendarWidget
                     TextInput::make('approved_credit_units')
                         ->required(),
                 ])
-                ->visible(fn($operation) => $operation === 'with_accreditation'),
+                ->visible(fn ($operation) => $operation === 'with_accreditation'),
             Select::make('trainers')
                 ->multiple()
-                ->relationship(titleAttribute:'trainers_name')
+                ->relationship(titleAttribute: 'trainers_name')
                 ->preload()
-                ->createOptionForm(fn($form) => TrainerResource::form($form)),
+                ->createOptionForm(fn (Schema $form): array => TrainerResource::form($form)->getComponents()),
             TextInput::make('topic_discuss')
                 ->required(),
             Select::make('twg')
                 ->label('Technical Working Groups')
                 ->multiple()
-                ->relationship(titleAttribute:'full_name')
+                ->relationship(titleAttribute: 'full_name')
                 ->preload()
-                ->createOptionForm(fn($form) => EmployeeResource::form($form))
+                ->createOptionForm(fn (Schema $form): array => EmployeeResource::form($form)->getComponents()),
             // Repeater::make('twgTrainings')
             //     ->relationship()
             //     // ->relationship(modifyQueryUsing: fn($query) => $query->dd())
@@ -268,8 +273,8 @@ class calendarTrainingWidget extends CalendarWidget
             //     )
             //     ->grid(2)
             //     ->addActionLabel('Add Technical Working Group')
-            
-        ];
+
+        ]);
 
         // If you have multiple model types on your calendar, you can return different schemas based on the $model property
         // return match($model) {
@@ -278,5 +283,4 @@ class calendarTrainingWidget extends CalendarWidget
         //     ],
         // };
     }
-
 }

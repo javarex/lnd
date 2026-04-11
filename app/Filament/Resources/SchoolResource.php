@@ -3,30 +3,24 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SchoolResource\Pages;
-use App\Filament\Resources\SchoolResource\RelationManagers;
-use App\Models\Barangay;
-use App\Models\Municipal;
 use App\Models\School;
+use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SchoolResource extends Resource
 {
     protected static ?string $model = School::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-library';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-library';
 
-    protected static ?string $navigationGroup = 'Libraries';
+    protected static string|\UnitEnum|null $navigationGroup = 'Libraries';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -37,24 +31,24 @@ class SchoolResource extends Resource
                 Forms\Components\TextInput::make('school')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('district')
-                    ->options(fn() => School::select('district')->distinct()->get()->pluck('district', 'district'))
+                Select::make('district')
+                    ->options(fn () => School::select('district')->distinct()->get()->pluck('district', 'district'))
                     ->searchable(),
-                Forms\Components\Select::make('municipality')
-                    ->options(fn($get) => School::select('municipality')
-                                                ->where('district', $get('district'))
-                                                ->distinct()
-                                                ->get()
-                                                ->pluck('municipality', 'municipality')
+                Select::make('municipality')
+                    ->options(fn ($get) => School::select('municipality')
+                        ->where('district', $get('district'))
+                        ->distinct()
+                        ->get()
+                        ->pluck('municipality', 'municipality')
                     )
                     ->searchable()
                     ->required(),
-                Forms\Components\Select::make('barangay')
-                    ->options(fn($get) => School::select('barangay')
-                                                ->where('municipality', $get('municipality'))
-                                                ->distinct()
-                                                ->get()
-                                                ->pluck('barangay', 'barangay')
+                Select::make('barangay')
+                    ->options(fn ($get) => School::select('barangay')
+                        ->where('municipality', $get('municipality'))
+                        ->distinct()
+                        ->get()
+                        ->pluck('barangay', 'barangay')
                     )
                     ->searchable()
                     ->required(),
@@ -92,11 +86,11 @@ class SchoolResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    // Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

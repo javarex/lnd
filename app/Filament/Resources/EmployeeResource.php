@@ -3,37 +3,37 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EmployeeResource\Pages;
-use App\Filament\Resources\EmployeeResource\RelationManagers;
 use App\Models\Employee;
 use App\Models\School;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Actions;
 use Filament\Actions\StaticAction;
 use Filament\Forms;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class EmployeeResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Employee::class;
 
-    protected static ?string $navigationGroup = 'Libraries';
+    protected static string|\UnitEnum|null $navigationGroup = 'Libraries';
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-users';
 
     public static function getPermissionPrefixes(): array
     {
         $permissionPrefixes = [
-            'add_twg'
+            'add_twg',
         ];
+
         return array_merge(config('filament-shield.permission_prefixes.resource'), $permissionPrefixes);
     }
-    public static function form(Form $form): Form
+
+    public static function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -53,8 +53,8 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                         ->getOptionLabelsUsing(fn ($value) => School::find($value)->school)
                         ->preload()
                         ->searchable()
-                        ->createOptionForm(fn(Form $form) => SchoolResource::form($form))
-                        ->createOptionAction(function(StaticAction $action) {
+                        ->createOptionForm(fn (Schema $form): array => SchoolResource::form($form)->getComponents())
+                        ->createOptionAction(function (StaticAction $action) {
                             return $action->modalHeading('Create new school');
                         }),
                     // Forms\Components\TextInput::make('school')
@@ -66,15 +66,16 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                             $types = [
                                 'Teaching' => 'Teaching',
                                 'Non-teaching' => 'Non-teaching',
-                                'Teaching Related / School Head' => 'Teaching Related / School Head'
+                                'Teaching Related / School Head' => 'Teaching Related / School Head',
                             ];
-                            if(auth()->user()->can('addTwg', Employee::class)) {
-                               $types = array_merge($types, ['TWG' => 'Technical Working Group', 'Division Employee' => 'Division Employee']);
+                            if (auth()->user()->can('addTwg', Employee::class)) {
+                                $types = array_merge($types, ['TWG' => 'Technical Working Group', 'Division Employee' => 'Division Employee']);
                             }
+
                             return $types;
                         })
                         ->required(),
-                ])
+                ]),
             ])
             ->columns(1)
             ->extraAttributes(['class' => 'w-1/2']);
@@ -105,11 +106,11 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

@@ -2,36 +2,21 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Actions\Action;
 use App\Models\CalendarOfTraining;
-use Filament\Actions\StaticAction;
-use Illuminate\Support\HtmlString;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
-use Filament\Support\Enums\ActionSize;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Repeater;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\ActionGroup;
-use App\Filament\Resources\VenueResource;
-use Filament\Forms\Components\DatePicker;
-use App\Filament\Resources\EmployeeResource;
-use App\Filament\Resources\TrainingResource;
-use Filament\Widgets\TableWidget as BaseWidget;
-use App\Filament\Widgets\calendarTrainingWidget;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
-use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
-use Filament\Tables\Actions\Action as TablesActionsAction;
-use Filament\Forms\Components\Actions\Action as ActionsAction;
+use Filament\Actions\Action as TablesActionsAction;
+use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Support\HtmlString;
 
 class TrainingsWidget extends BaseWidget
 {
     use HasWidgetShield;
+
     public function table(Table $table): Table
     {
         return $table
@@ -46,31 +31,31 @@ class TrainingsWidget extends BaseWidget
                     ->extraAttributes(['class' => 'uppercase'])
                     ->formatStateUsing(function ($state, $record) {
                         return new HtmlString(view('filament.resources.calendar-of-training.tables.title-state', [
-                            'state' => $state,  'record' => $record
+                            'state' => $state,  'record' => $record,
                         ]));
                     })
                     ->wrap(),
                 TextColumn::make('status')
-                ->badge()
+                    ->badge(),
             ])
 //            view('filament::components.icon', ['icon' => 'heroicon-o-arrow-down'])->render()
             ->actions([
 
                 ActionGroup::make([
-                    Tables\Actions\Action::make('update_status')
-                        ->label(fn($record) => $record->participants->count() == 0 ? 'Unable to update status' : 'Update Status')
-                        ->icon(fn($record) => $record->participants->count() == 0 ? 'heroicon-s-x-circle' : 'heroicon-s-hand-thumb-up')
+                    TablesActionsAction::make('update_status')
+                        ->label(fn ($record) => $record->participants->count() == 0 ? 'Unable to update status' : 'Update Status')
+                        ->icon(fn ($record) => $record->participants->count() == 0 ? 'heroicon-s-x-circle' : 'heroicon-s-hand-thumb-up')
                         ->requiresConfirmation()
                         ->form([
                             Select::make('status')
-                                    ->label('Status')
-                                    ->options([
-                                        'Approved' => 'Approved',
-                                        'Disapproved' => 'Disapproved',
-                                        'Pending' => 'Pending',
-                                        ])
+                                ->label('Status')
+                                ->options([
+                                    'Approved' => 'Approved',
+                                    'Disapproved' => 'Disapproved',
+                                    'Pending' => 'Pending',
+                                ]),
                         ])
-                        ->action(function($data, $record) {
+                        ->action(function ($data, $record) {
                             try {
 
                                 $record->status = $data['status'];
@@ -87,31 +72,30 @@ class TrainingsWidget extends BaseWidget
                                     ->send();
                             }
                         })
-                        ->disabled(fn($record) => $record->participants->count() == 0)
-                        ->color(fn($record) => $record->participants->count() == 0 ?  'danger' : 'primary')
+                        ->disabled(fn ($record) => $record->participants->count() == 0)
+                        ->color(fn ($record) => $record->participants->count() == 0 ? 'danger' : 'primary')
                         ->outlined(),
-                    Tables\Actions\Action::make('print_participation')
+                    TablesActionsAction::make('print_participation')
                         ->label('Download Certificate of Participation')
                         ->tooltip('Certificate of pariticipation')
                         ->color('success')
                         ->icon('heroicon-o-arrow-down-on-square-stack')
-                        ->url(fn($record) => route('report', [$record->id]),shouldOpenInNewTab: true),
-                    Tables\Actions\Action::make('print_recognition_speaker')
+                        ->url(fn ($record) => route('report', [$record->id]), shouldOpenInNewTab: true),
+                    TablesActionsAction::make('print_recognition_speaker')
                         ->label('Download Certificate of Recognition')
                         ->tooltip('Certificate of Recognition')
                         ->color('success')
                         ->icon('heroicon-o-arrow-down-on-square-stack')
-                        ->url(fn($record) => route('reportRecognition', [$record->id]),shouldOpenInNewTab: true),
-                    Tables\Actions\Action::make('export report')
+                        ->url(fn ($record) => route('reportRecognition', [$record->id]), shouldOpenInNewTab: true),
+                    TablesActionsAction::make('export report')
                         ->icon('heroicon-o-arrow-down-on-square-stack')
-                        ->url(fn($record) => route('filament.admin.resources.calendar-of-trainings.school', [$record]))
+                        ->url(fn ($record) => route('filament.admin.resources.calendar-of-trainings.school', [$record])),
 
                 ]),
             ])
-           ->poll(3)
-           ->paginated()
-           ->paginationPageOptions([3])
-            ;
+            ->poll(3)
+            ->paginated()
+            ->paginationPageOptions([3]);
     }
 
     public function getColumnSpan(): int|string|array

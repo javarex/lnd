@@ -2,17 +2,16 @@
 
 namespace App\Filament\Auth;
 
-use Filament\Forms\Form;
-use Filament\Forms\Components\Component;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse;
+use Filament\Auth\Pages\Login as BaseAuth;
 use Filament\Forms\Components\TextInput;
-use Filament\Pages\Auth\Login as BaseAuth;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Schema;
 use Illuminate\Validation\ValidationException;
-use Filament\Http\Responses\Auth\LoginResponse;
 
 class Login extends BaseAuth
 {
-
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
