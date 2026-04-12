@@ -1,11 +1,99 @@
+.fi-sidebar {
+    @apply relative inset-y-0 my-0 h-dvh overflow-hidden border-r border-[#0038A8]/20 shadow-xl shadow-[#0038A8]/10 dark:border-[#FCD116]/20 dark:shadow-black/30;
+    background:
+        linear-gradient(180deg, rgba(252, 209, 22, 0.18) 0%, rgba(252, 209, 22, 0) 18rem),
+        linear-gradient(145deg, rgba(0, 56, 168, 0.12) 0%, rgba(255, 255, 255, 0.96) 36%, rgba(239, 246, 255, 0.94) 100%);
+}
+
+.fi-body-has-topbar .fi-sidebar {
+    @apply lg:top-0 lg:h-dvh;
+}
+
+.dark .fi-sidebar {
+    background:
+        linear-gradient(180deg, rgba(252, 209, 22, 0.14) 0%, rgba(252, 209, 22, 0) 16rem),
+        linear-gradient(145deg, #061642 0%, #082766 46%, #020617 100%);
+}
+
+.fi-sidebar::before {
+    @apply pointer-events-none absolute inset-x-0 top-0 h-1.5;
+    content: '';
+    background: linear-gradient(90deg, #0038A8 0%, #FCD116 52%, #CE1126 100%);
+}
+
+.fi-sidebar::after {
+    @apply pointer-events-none absolute inset-y-0 right-0 w-px bg-white/60;
+    content: '';
+}
+
+.dark .fi-sidebar::after {
+    @apply bg-white/10;
+}
+
+.fi-sidebar-header {
+    @apply relative z-10 min-h-14 border-b border-white/60 bg-white/50 px-3 backdrop-blur dark:border-white/10 dark:bg-white/5;
+}
+
+.fi-sidebar-nav {
+    @apply relative z-10 overflow-y-hidden px-2 py-2;
+    overscroll-behavior-y: auto;
+    scrollbar-gutter: auto;
+    scrollbar-width: none;
+}
+
+.fi-sidebar-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.fi-body-has-topbar .fi-sidebar-nav {
+    @apply lg:pt-16;
+}
+
 .fi-sidebar-nav-groups {
-    @apply gap-y-1;
+    @apply gap-y-1.5;
 }
 
-.fi-sidebar-group-button {
-    @apply py-1;
+.fi-sidebar-group-btn {
+    @apply rounded-lg px-2 py-1.5 text-xs font-semibold uppercase tracking-normal text-[#0038A8]/75 transition hover:bg-white/70 hover:text-[#0038A8] dark:text-blue-100/80 dark:hover:bg-white/10 dark:hover:text-[#FCD116];
 }
 
-.fi-sidebar-item-button {
-    @apply py-0.5;
+.fi-sidebar-group-label {
+    @apply text-xs font-semibold tracking-normal;
+}
+
+.fi-sidebar-item-btn {
+    @apply min-h-8 rounded-lg border border-transparent bg-white/40 px-2 py-1 text-sm font-medium text-gray-700 transition hover:border-white/70 hover:bg-white/80 hover:text-[#0038A8] hover:shadow-sm dark:bg-white/5 dark:text-blue-50/85 dark:hover:border-[#FCD116]/25 dark:hover:bg-white/10 dark:hover:text-[#FCD116];
+}
+
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn,
+.fi-sidebar-item-has-active-child-items > .fi-sidebar-item-btn {
+    @apply border-[#0038A8] bg-[#0038A8] text-white shadow-sm ring-1 ring-[#FCD116]/60 dark:border-[#FCD116]/50 dark:bg-[#0038A8] dark:text-white;
+}
+
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-icon,
+.fi-sidebar-item-has-active-child-items > .fi-sidebar-item-btn .fi-sidebar-item-icon {
+    @apply text-[#FCD116];
+}
+
+.fi-sidebar-item-icon {
+    @apply h-4 w-4 text-[#0038A8]/75 transition dark:text-blue-100/80;
+}
+
+.fi-sidebar-item-btn:hover .fi-sidebar-item-icon {
+    @apply text-[#CE1126] dark:text-[#FCD116];
+}
+
+.fi-sidebar-item-label {
+    @apply truncate text-sm;
+}
+
+.fi-sidebar-open-collapse-sidebar-btn,
+.fi-sidebar-close-collapse-sidebar-btn,
+.fi-topbar-open-collapse-sidebar-btn,
+.fi-topbar-close-collapse-sidebar-btn {
+    @apply rounded-lg text-[#0038A8]/75 transition hover:bg-white/70 hover:text-[#0038A8] dark:text-blue-100/80 dark:hover:bg-white/10 dark:hover:text-[#FCD116];
+}
+
+.fi-sidebar-close-overlay {
+    @apply bg-gray-950/50 backdrop-blur-sm;
 }

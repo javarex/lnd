@@ -16,8 +16,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
+use Guava\Calendar\Contracts\ContextualInfo;
+use Guava\Calendar\Enums\Context;
 use Guava\Calendar\Filament\Actions\CreateAction;
 use Guava\Calendar\Filament\CalendarWidget;
+use Guava\Calendar\ValueObjects\DateClickInfo;
+use Guava\Calendar\ValueObjects\DateSelectInfo;
 use Guava\Calendar\ValueObjects\FetchInfo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -27,7 +31,8 @@ class calendarTrainingWidget extends CalendarWidget
 {
     use HasWidgetShield;
 
-    // protected static string $view = 'filament.widgets.calendar-training-widget';
+    protected string $view = 'filament.widgets.calendar-training-widget';
+
     protected bool $eventClickEnabled = true;
 
     protected bool $dateClickEnabled = true;
@@ -62,10 +67,6 @@ class calendarTrainingWidget extends CalendarWidget
                 ...CalendarOfTraining::query()
                     ->dateBetween($info)
                     ->get()
-                    ->each(function ($item) {
-                        $item->start_date = Carbon::parse($item->start_date)->endOfDay();
-                        $item->end_date = Carbon::parse($item->end_date)->endOfDay();
-                    })
             );
 
     }
@@ -176,6 +177,25 @@ class calendarTrainingWidget extends CalendarWidget
         return 'asd';
     }
 
+    public function getContextMenuActionsUsing(Context $context, array $data = []): Collection
+    {
+        $this->setRawCalendarContextData($context, $data);
+
+        $actions = match ($context) {
+            Context::EventClick => $this->getCachedEventClickContextMenuActions(),
+            Context::DateClick => $this->getCachedDateClickContextMenuActions(),
+            Context::DateSelect => $this->getCachedDateSelectContextMenuActions(),
+            Context::NoEventsClick => $this->getCachedNoEventsClickContextMenuActions(),
+        };
+
+        return collect($actions)
+            ->filter(fn (Action $action): bool => $action->isVisible())
+            ->map(
+                fn (Action $action): string => $action($this->getRawCalendarContextData())
+                    ->toHtml()
+            );
+    }
+
     protected function getDateSelectContextMenuActions(): array
     {
         // dd(data_get($arguments, 'dateStr'));
@@ -184,12 +204,9 @@ class calendarTrainingWidget extends CalendarWidget
             CreateAction::make('without_accreditation')
                 ->label('New Program without Accreditation')
                 ->model(CalendarOfTraining::class)
-                ->mountUsing(fn ($arguments, $form) => $form->fill([
-                    // dd(data_get($arguments, 'startStr') ?? data_get($arguments, 'dateStr')),
-                    'start_date' => data_get($arguments, 'startStr') ?? data_get($arguments, 'dateStr'),
-                    // 'end_date' => data_get($arguments, 'endStr') ?? data_get($arguments, 'dateStr'),
-                    'end_date' => data_get($arguments, 'endStr') ? Carbon::parse(data_get($arguments, 'endStr'))->subDay() : data_get($arguments, 'dateStr'),
-                ]))
+                ->mountUsing(fn (Schema $form, CreateAction $action) => $form->fill(
+                    $this->getCalendarDateDefaults($action->getArguments())
+                ))
                 ->mutateFormDataUsing(function (array $data) {
                     $data['user_id'] = auth()->id();
 
@@ -198,10 +215,9 @@ class calendarTrainingWidget extends CalendarWidget
             CreateAction::make('with_accreditation')
                 ->label('New Program with Accreditation')
                 ->model(CalendarOfTraining::class)
-                ->mountUsing(fn ($arguments, $form) => $form->fill([
-                    'start_date' => data_get($arguments, 'startStr') ?? data_get($arguments, 'dateStr'),
-                    'end_date' => data_get($arguments, 'endStr') ? Carbon::parse(data_get($arguments, 'endStr'))->subDay() : data_get($arguments, 'dateStr'),
-                ]))
+                ->mountUsing(fn (Schema $form, CreateAction $action) => $form->fill(
+                    $this->getCalendarDateDefaults($action->getArguments())
+                ))
                 ->mutateFormDataUsing(function (array $data) {
                     $data['user_id'] = auth()->id();
 
@@ -282,5 +298,46 @@ class calendarTrainingWidget extends CalendarWidget
         //         TextInput::make('name'),
         //     ],
         // };
+    }
+
+    /**
+     * @return array{start_date: string, end_date: string}
+     */
+    private function getCalendarDateDefaults(ContextualInfo|array|null $calendarInfo): array
+    {
+        if ($calendarInfo instanceof DateSelectInfo) {
+            return [
+                'start_date' => $calendarInfo->start->toDateString(),
+                'end_date' => $calendarInfo->end->subDay()->toDateString(),
+            ];
+        }
+
+        if ($calendarInfo instanceof DateClickInfo) {
+            return [
+                'start_date' => $calendarInfo->date->toDateString(),
+                'end_date' => $calendarInfo->date->toDateString(),
+            ];
+        }
+
+        if (is_array($calendarInfo)) {
+            $selectedStartDate = data_get($calendarInfo, 'data.startStr');
+            $selectedEndDate = data_get($calendarInfo, 'data.endStr');
+            $clickedDate = data_get($calendarInfo, 'data.dateStr');
+            $startDate = $selectedStartDate ?? $clickedDate;
+
+            if (filled($startDate)) {
+                return [
+                    'start_date' => Carbon::parse($startDate)->toDateString(),
+                    'end_date' => filled($selectedEndDate)
+                        ? Carbon::parse($selectedEndDate)->subDay()->toDateString()
+                        : Carbon::parse($startDate)->toDateString(),
+                ];
+            }
+        }
+
+        return [
+            'start_date' => today()->toDateString(),
+            'end_date' => today()->toDateString(),
+        ];
     }
 }

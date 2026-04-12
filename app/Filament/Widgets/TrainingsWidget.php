@@ -17,17 +17,24 @@ class TrainingsWidget extends BaseWidget
 {
     use HasWidgetShield;
 
+    protected string $view = 'filament.widgets.trainings-widget';
+
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Table view of trainings')
+            ->heading('Program Status Board')
+            ->description('Review schedules, participant readiness, status, and certificate actions.')
             ->query(
-                CalendarOfTraining::query()->with('training')
+                CalendarOfTraining::query()
+                    ->with('training')
+                    ->withCount('participants')
             )
+            ->defaultSort('start_date', 'desc')
+            ->striped()
             ->columns([
                 TextColumn::make('training.training_name')
                     ->searchable()
-                    ->label('Program Details')
+                    ->label('Program')
                     ->extraAttributes(['class' => 'uppercase'])
                     ->formatStateUsing(function ($state, $record) {
                         return new HtmlString(view('filament.resources.calendar-of-training.tables.title-state', [
@@ -36,15 +43,20 @@ class TrainingsWidget extends BaseWidget
                     })
                     ->wrap(),
                 TextColumn::make('status')
-                    ->badge(),
+                    ->badge()
+                    ->color(fn ($state): string => match ((string) ($state?->value ?? $state)) {
+                        'Approved' => 'success',
+                        'Disapproved' => 'danger',
+                        default => 'warning',
+                    }),
             ])
 //            view('filament::components.icon', ['icon' => 'heroicon-o-arrow-down'])->render()
             ->actions([
 
                 ActionGroup::make([
                     TablesActionsAction::make('update_status')
-                        ->label(fn ($record) => $record->participants->count() == 0 ? 'Unable to update status' : 'Update Status')
-                        ->icon(fn ($record) => $record->participants->count() == 0 ? 'heroicon-s-x-circle' : 'heroicon-s-hand-thumb-up')
+                        ->label(fn ($record) => $record->participants_count == 0 ? 'Unable to update status' : 'Update Status')
+                        ->icon(fn ($record) => $record->participants_count == 0 ? 'heroicon-s-x-circle' : 'heroicon-s-hand-thumb-up')
                         ->requiresConfirmation()
                         ->form([
                             Select::make('status')
@@ -72,8 +84,8 @@ class TrainingsWidget extends BaseWidget
                                     ->send();
                             }
                         })
-                        ->disabled(fn ($record) => $record->participants->count() == 0)
-                        ->color(fn ($record) => $record->participants->count() == 0 ? 'danger' : 'primary')
+                        ->disabled(fn ($record) => $record->participants_count == 0)
+                        ->color(fn ($record) => $record->participants_count == 0 ? 'danger' : 'primary')
                         ->outlined(),
                     TablesActionsAction::make('print_participation')
                         ->label('Download Certificate of Participation')
@@ -95,7 +107,7 @@ class TrainingsWidget extends BaseWidget
             ])
             ->poll(3)
             ->paginated()
-            ->paginationPageOptions([3]);
+            ->paginationPageOptions([3, 5, 10]);
     }
 
     public function getColumnSpan(): int|string|array

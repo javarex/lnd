@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\StatusEnum;
 use App\Models\Scopes\CalendarOfTraining\UserFilterScope;
 use App\Traits\HasDateFormat;
+use Carbon\Carbon;
 use Guava\Calendar\Contracts\Eventable;
 use Guava\Calendar\ValueObjects\CalendarEvent;
 use Guava\Calendar\ValueObjects\FetchInfo;
@@ -45,11 +46,17 @@ class CalendarOfTraining extends Model implements Eventable
 
     public function toCalendarEvent(): CalendarEvent
     {
+        // Date-only all-day events are anchored at noon to avoid timezone conversion
+        // rolling midnight into the previous or next calendar day.
+        $startDate = Carbon::parse($this->start_date)->setTime(12, 0);
+        $endDate = Carbon::parse($this->end_date ?? $this->start_date)->setTime(12, 0);
+
         return CalendarEvent::make($this)
             ->action('edit')
             ->title($this->training?->training_name)
-            ->start($this->start_date)
-            ->end($this->end_date)
+            ->start($startDate)
+            ->end($endDate)
+            ->allDay()
             // ->end(dd($this->end_date))
             ->extendedProp('participants', $this->participants()->count())
             ->extendedProp('with_accreditation', $this->accreditation_number !== null)

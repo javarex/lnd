@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Filament\Resources\CalendarOfTrainingResource;
 use App\Filament\Resources\EmployeeResource;
 use App\Filament\Resources\ParticipantResource;
-use App\Filament\Resources\SchoolResource;
 use App\Filament\Resources\TrainingResource;
 use App\Filament\Widgets\calendarTrainingWidget;
 use App\Filament\Widgets\TrainingsWidget;
@@ -43,7 +42,7 @@ class Dashboard extends \Filament\Pages\Dashboard
     }
 
     /**
-     * @return array<int, array{label: string, value: string, tone: string, icon: string, url: string}>
+     * @return array<int, array{key: string, label: string, value: string, tone: string, icon: string}>
      */
     public function getDashboardStats(): array
     {
@@ -54,32 +53,32 @@ class Dashboard extends \Filament\Pages\Dashboard
 
         return [
             [
+                'key' => 'programs',
                 'label' => 'Programs',
                 'value' => number_format(CalendarOfTraining::query()->count()),
                 'tone' => 'blue',
                 'icon' => 'heroicon-o-academic-cap',
-                'url' => CalendarOfTrainingResource::getUrl(),
             ],
             [
+                'key' => 'approved',
                 'label' => 'Approved',
                 'value' => number_format((int) $statusCounts->get('Approved', 0)),
                 'tone' => 'green',
                 'icon' => 'heroicon-o-check-badge',
-                'url' => CalendarOfTrainingResource::getUrl(),
             ],
             [
+                'key' => 'pending',
                 'label' => 'Pending',
                 'value' => number_format((int) $statusCounts->get('Pending', 0)),
                 'tone' => 'yellow',
                 'icon' => 'heroicon-o-clock',
-                'url' => CalendarOfTrainingResource::getUrl(),
             ],
             [
+                'key' => 'participants',
                 'label' => 'Participants',
                 'value' => number_format(Participant::query()->count()),
                 'tone' => 'red',
                 'icon' => 'heroicon-o-users',
-                'url' => ParticipantResource::getUrl(),
             ],
         ];
     }
@@ -105,67 +104,15 @@ class Dashboard extends \Filament\Pages\Dashboard
                 'value' => number_format(CalendarOfTraining::query()
                     ->whereBetween('start_date', [now()->startOfMonth(), now()->endOfMonth()])
                     ->count()),
-                'url' => CalendarOfTrainingResource::getUrl(),
+                'url' => CalendarOfTrainingResource::getUrl(parameters: [
+                    'filters' => [
+                        'this_month' => [
+                            'isActive' => true,
+                        ],
+                    ],
+                ]),
             ],
         ];
-    }
-
-    /**
-     * @return array<int, array{label: string, description: string, icon: string, url: string, tone: string}>
-     */
-    public function getQuickLinks(): array
-    {
-        return [
-            [
-                'label' => 'New program',
-                'description' => 'Schedule a learning and development activity',
-                'icon' => 'heroicon-o-calendar-days',
-                'url' => CalendarOfTrainingResource::getUrl('create'),
-                'tone' => 'blue',
-            ],
-            [
-                'label' => 'Training library',
-                'description' => 'Manage the master list of programs',
-                'icon' => 'heroicon-o-book-open',
-                'url' => TrainingResource::getUrl(),
-                'tone' => 'yellow',
-            ],
-            [
-                'label' => 'Personnel',
-                'description' => 'Open employee and participant records',
-                'icon' => 'heroicon-o-user-group',
-                'url' => EmployeeResource::getUrl(),
-                'tone' => 'red',
-            ],
-            [
-                'label' => 'Schools',
-                'description' => 'Review school and agency entries',
-                'icon' => 'heroicon-o-building-library',
-                'url' => SchoolResource::getUrl(),
-                'tone' => 'blue',
-            ],
-        ];
-    }
-
-    /**
-     * @return array<int, array{title: string, date: string, venue: string, status: string, url: string}>
-     */
-    public function getUpcomingPrograms(): array
-    {
-        return CalendarOfTraining::query()
-            ->with(['training', 'venue'])
-            ->whereDate('start_date', '>=', today())
-            ->orderBy('start_date')
-            ->limit(5)
-            ->get()
-            ->map(fn (CalendarOfTraining $program): array => [
-                'title' => $program->training?->training_name ?? 'Untitled program',
-                'date' => $this->formatProgramDate($program->start_date),
-                'venue' => $program->venue?->venue ?? 'Venue not set',
-                'status' => (string) $program->status?->value,
-                'url' => CalendarOfTrainingResource::getUrl('edit', ['record' => $program]),
-            ])
-            ->all();
     }
 
     protected function formatProgramDate(mixed $date): string
@@ -175,5 +122,78 @@ class Dashboard extends \Filament\Pages\Dashboard
         }
 
         return filled($date) ? (string) $date : 'Date not set';
+    }
+
+    /**
+     * @return array<string, array{title: string, description: string, empty: string, rows: array<int, array{title: string, meta: string, badge: string, url: string|null}>}>
+     */
+    public function getDashboardModalPanels(): array
+    {
+        return [
+            'programs' => [
+                'title' => 'Programs',
+                'description' => 'Latest learning and development schedules.',
+                'empty' => 'No programs found.',
+                'rows' => $this->getProgramModalRows(),
+            ],
+            'approved' => [
+                'title' => 'Approved Programs',
+                'description' => 'Only approved training schedules are listed here.',
+                'empty' => 'No approved programs found.',
+                'rows' => $this->getProgramModalRows('Approved'),
+            ],
+            'pending' => [
+                'title' => 'Pending Programs',
+                'description' => 'Only pending training schedules are listed here.',
+                'empty' => 'No pending programs found.',
+                'rows' => $this->getProgramModalRows('Pending'),
+            ],
+            'participants' => [
+                'title' => 'Participants',
+                'description' => 'Recently added participant records.',
+                'empty' => 'No participants found.',
+                'rows' => $this->getParticipantModalRows(),
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{title: string, meta: string, badge: string, url: string|null}>
+     */
+    private function getProgramModalRows(?string $status = null): array
+    {
+        return CalendarOfTraining::query()
+            ->with(['training', 'venue'])
+            ->when($status, fn ($query) => $query->where('status', $status))
+            ->latest('start_date')
+            ->limit(10)
+            ->get()
+            ->map(fn (CalendarOfTraining $program): array => [
+                'title' => $program->training?->training_name ?? 'Untitled program',
+                'meta' => $this->formatProgramDate($program->start_date)
+                    .' - '.($program->venue?->venue ?? 'Venue not set'),
+                'badge' => (string) ($program->status?->value ?? $program->status ?? 'Pending'),
+                'url' => CalendarOfTrainingResource::getUrl('edit', ['record' => $program]),
+            ])
+            ->all();
+    }
+
+    /**
+     * @return array<int, array{title: string, meta: string, badge: string, url: string|null}>
+     */
+    private function getParticipantModalRows(): array
+    {
+        return Participant::query()
+            ->with('employee')
+            ->latest()
+            ->limit(10)
+            ->get()
+            ->map(fn (Participant $participant): array => [
+                'title' => $participant->employee?->full_name ?? 'Unnamed participant',
+                'meta' => 'Participant record #'.$participant->getKey(),
+                'badge' => 'Participant',
+                'url' => ParticipantResource::getUrl('edit', ['record' => $participant]),
+            ])
+            ->all();
     }
 }

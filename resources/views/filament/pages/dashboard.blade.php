@@ -22,20 +22,41 @@
 
                 <div class="grid grid-cols-3 divide-x divide-[#0038A8]/10 bg-white dark:divide-white/10 dark:bg-gray-950">
                     @foreach ($this->getDashboardHighlights() as $highlight)
-                        <div class="px-4 py-6 text-center">
+                        <a
+                            href="{{ $highlight['url'] }}"
+                            class="group px-4 py-6 text-center outline-none transition hover:bg-[#0038A8]/5 focus-visible:bg-[#0038A8]/5 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0038A8] dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+                        >
                             <div class="text-xl font-bold text-[#0038A8] dark:text-blue-300">
                                 {{ $highlight['value'] }}
                             </div>
-                            <div class="mt-1 text-xs font-medium text-gray-600 dark:text-gray-400">
+                            <div class="mt-1 text-xs font-medium text-gray-600 transition group-hover:text-[#0038A8] dark:text-gray-400 dark:group-hover:text-blue-200">
                                 {{ $highlight['label'] }}
                             </div>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
             </div>
         </section>
 
-        <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <section
+            x-data="{
+                selectedPanel: null,
+                searchQuery: '',
+                panels: @js($this->getDashboardModalPanels()),
+                filteredRows() {
+                    const rows = this.panels[this.selectedPanel]?.rows ?? []
+                    const query = this.searchQuery.trim().toLowerCase()
+
+                    if (! query) {
+                        return rows
+                    }
+
+                    return rows.filter((row) => `${row.title} ${row.meta} ${row.badge}`.toLowerCase().includes(query))
+                },
+            }"
+            x-on:keydown.escape.window="selectedPanel = null"
+            class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
+        >
             @foreach ($this->getDashboardStats() as $stat)
                 @php
                     $toneClasses = match ($stat['tone']) {
@@ -46,23 +67,109 @@
                     };
                 @endphp
 
-                <div class="rounded-lg border bg-white p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:bg-gray-900">
+                <button
+                    type="button"
+                    x-on:click="selectedPanel = @js($stat['key']); searchQuery = ''"
+                    class="group block rounded-lg border bg-white p-5 text-left shadow-sm ring-1 ring-black/5 outline-none transition hover:-translate-y-0.5 hover:border-[#0038A8]/30 hover:shadow-md focus-visible:ring-2 focus-visible:ring-[#0038A8] dark:border-white/10 dark:bg-gray-900 dark:hover:border-white/20"
+                >
                     <div class="flex items-center justify-between gap-4">
                         <div>
-                            <div class="text-sm font-medium text-gray-600 dark:text-gray-400">
+                            <div class="text-sm font-medium text-gray-600 transition group-hover:text-[#0038A8] dark:text-gray-400 dark:group-hover:text-blue-200">
                                 {{ $stat['label'] }}
                             </div>
                             <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">
                                 {{ $stat['value'] }}
                             </div>
+                            <div class="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#0038A8] opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100 dark:text-blue-300">
+                                View details
+                                <x-filament::icon icon="heroicon-m-arrow-up-right" class="h-3.5 w-3.5" />
+                            </div>
                         </div>
 
-                        <div @class(['flex h-12 w-12 items-center justify-center rounded-lg border', $toneClasses])>
+                        <div @class(['flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border transition group-hover:scale-105', $toneClasses])>
                             <x-filament::icon :icon="$stat['icon']" class="h-6 w-6" />
                         </div>
                     </div>
-                </div>
+                </button>
             @endforeach
+
+            <div
+                x-cloak
+                x-show="selectedPanel"
+                x-transition.opacity.duration.150ms
+                class="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/60 p-4"
+                role="dialog"
+                aria-modal="true"
+            >
+                <button
+                    type="button"
+                    x-on:click="selectedPanel = null"
+                    class="absolute inset-0 cursor-default"
+                    aria-label="Close details"
+                ></button>
+
+                <div
+                    x-show="selectedPanel"
+                    x-transition.scale.origin.center.duration.150ms
+                    class="relative max-h-[85vh] w-full max-w-2xl overflow-hidden rounded-lg bg-white shadow-2xl ring-1 ring-black/10 dark:bg-gray-900 dark:ring-white/10"
+                >
+                    <div class="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-white/10">
+                        <div>
+                            <h2 class="text-base font-semibold text-gray-950 dark:text-white" x-text="panels[selectedPanel]?.title"></h2>
+                            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400" x-text="panels[selectedPanel]?.description"></p>
+                        </div>
+
+                        <button
+                            type="button"
+                            x-on:click="selectedPanel = null"
+                            class="rounded-lg p-2 text-gray-400 outline-none transition hover:bg-gray-100 hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-[#0038A8] dark:hover:bg-white/10 dark:hover:text-gray-200"
+                            aria-label="Close details"
+                        >
+                            <x-filament::icon icon="heroicon-m-x-mark" class="h-5 w-5" />
+                        </button>
+                    </div>
+
+                    <div class="max-h-[60vh] overflow-y-auto p-5">
+                        <div class="mb-4">
+                            <label class="sr-only" for="dashboard-modal-search">Search records</label>
+                            <div class="relative">
+                                <x-filament::icon icon="heroicon-m-magnifying-glass" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                <input
+                                    id="dashboard-modal-search"
+                                    type="search"
+                                    x-model.debounce.150ms="searchQuery"
+                                    placeholder="Search records"
+                                    class="w-full rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-3 text-sm text-gray-950 outline-none transition placeholder:text-gray-400 focus:border-[#0038A8] focus:ring-2 focus:ring-[#0038A8]/20 dark:border-white/10 dark:bg-gray-950 dark:text-white dark:focus:border-blue-300"
+                                />
+                            </div>
+                        </div>
+
+                        <template x-if="filteredRows().length === 0">
+                            <div class="rounded-lg border border-dashed border-gray-300 px-4 py-8 text-center dark:border-white/20">
+                                <x-filament::icon icon="heroicon-o-inbox" class="mx-auto h-8 w-8 text-gray-400" />
+                                <p class="mt-3 text-sm font-medium text-gray-950 dark:text-white" x-text="searchQuery ? 'No matching records found.' : panels[selectedPanel]?.empty"></p>
+                            </div>
+                        </template>
+
+                        <div class="space-y-3">
+                            <template x-for="row in filteredRows()" x-bind:key="`${selectedPanel}-${row.title}-${row.meta}`">
+                                <div class="rounded-lg border border-gray-200 p-4 transition hover:border-[#0038A8]/30 hover:bg-gray-50 dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/5">
+                                    <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                        <div class="min-w-0">
+                                            <h3 class="truncate text-sm font-semibold text-gray-950 dark:text-white" x-text="row.title"></h3>
+                                            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400" x-text="row.meta"></p>
+                                        </div>
+
+                                        <div class="flex shrink-0 items-center gap-2">
+                                            <span class="rounded-lg bg-[#0038A8]/10 px-2.5 py-1 text-xs font-semibold text-[#0038A8] dark:bg-blue-300/10 dark:text-blue-300" x-text="row.badge"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section class="space-y-4">

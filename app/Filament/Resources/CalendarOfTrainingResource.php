@@ -9,7 +9,9 @@ use Filament\Actions;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class CalendarOfTrainingResource extends Resource
 {
@@ -59,7 +61,12 @@ class CalendarOfTrainingResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Filter::make('this_month')
+                    ->label('This month')
+                    ->query(fn (Builder $query): Builder => $query->whereBetween('start_date', [
+                        now()->startOfMonth()->toDateString(),
+                        now()->endOfMonth()->toDateString(),
+                    ])),
             ])
             ->actions([
                 Actions\EditAction::make(),
