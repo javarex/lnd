@@ -25,8 +25,7 @@ class ParticipantsRelationManager extends RelationManager
                         'employee',
                         'full_name',
                         function ($query) {
-                            $query->whereNotIn('employee_type', ['TWG', 'Division Employee'])
-                                ->where;
+                            $query->whereNotIn('employee_type', ['TWG', 'Division Employee']);
                         })
                     ->preload()
                     ->searchable()
