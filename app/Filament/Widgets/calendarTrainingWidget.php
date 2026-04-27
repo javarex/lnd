@@ -2,6 +2,8 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\CalendarOfTrainingResource;
+use App\Filament\Resources\CalendarOfTrainingResource\Pages\Concerns\ManagesTrainingParticipants;
 use App\Filament\Resources\EmployeeResource;
 use App\Filament\Resources\TrainerResource;
 use App\Filament\Resources\TrainingResource;
@@ -30,6 +32,7 @@ use Illuminate\Support\HtmlString;
 class calendarTrainingWidget extends CalendarWidget
 {
     use HasWidgetShield;
+    use ManagesTrainingParticipants;
 
     protected string $view = 'filament.widgets.calendar-training-widget';
 
@@ -117,11 +120,10 @@ class calendarTrainingWidget extends CalendarWidget
 
     public function participantAction()
     {
-        return Action::make('participants')
+        return CalendarOfTrainingResource::addParticipantsAction()
             ->label('Participants')
             ->icon('heroicon-o-users')
-            ->record(fn () => $this->getEventRecord())
-            ->action(fn ($record) => redirect(route('filament.admin.resources.calendar-of-trainings.edit', [$this->getEventRecord()])));
+            ->record(fn () => $this->getEventRecord());
         // ->modal()
         // ->slideOver()
         // ->modalWidth('lg')
@@ -133,8 +135,6 @@ class calendarTrainingWidget extends CalendarWidget
         //                 <div class='text-sm dark:text-gray-400 text-gray-700'>{$record->duration}</div>
         //             ");
         // })
-        // ->record(fn() => $this->getEventRecord())
-        // ->url(fn($record) => route('filament.admin.resources.calendar-of-trainings.edit', ['record' => $record?->getKey()]))
         // ->form([
         //     Repeater::make('participants')
         //         ->relationship()
@@ -156,13 +156,6 @@ class calendarTrainingWidget extends CalendarWidget
         //     return $data;
         // })
     }
-
-    // public function onEventClick(array $info = [], ?string $action = null): void
-    // {
-    //     if ($action == 'participants') {
-    //         redirect(route('filament.admin.resources.calendar-of-trainings.edit', [$info['event']['extendedProps']['key']]));
-    //     }
-    // }
 
     protected function getEventClickContextMenuActions(): array
     {

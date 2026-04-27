@@ -3,16 +3,20 @@
 namespace App\Filament\Resources\CalendarOfTrainingResource\Pages;
 
 use App\Filament\Resources\CalendarOfTrainingResource;
-use Filament\Actions;
+use App\Filament\Resources\CalendarOfTrainingResource\Pages\Concerns\ManagesTrainingParticipants;
 use Filament\Resources\Pages\EditRecord;
 
 class EditCalendarOfTraining extends EditRecord
 {
+    use ManagesTrainingParticipants;
+
     protected static string $resource = CalendarOfTrainingResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
+            CalendarOfTrainingResource::addParticipantsAction()
+                ->record($this->record),
             // Actions\DeleteAction::make(),
         ];
     }

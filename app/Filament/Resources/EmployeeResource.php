@@ -7,7 +7,6 @@ use App\Models\Employee;
 use App\Models\School;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Actions;
-use Filament\Actions\StaticAction;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;
@@ -54,8 +53,9 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                         ->preload()
                         ->searchable()
                         ->createOptionForm(fn (Schema $form): array => SchoolResource::form($form)->getComponents())
-                        ->createOptionAction(function (StaticAction $action) {
-                            return $action->modalHeading('Create new school');
+                        ->createOptionAction(function ($action) {
+                            return $action->modalHeading('Create new school')
+                                ->modalWidth('md');
                         }),
                     // Forms\Components\TextInput::make('school')
                     //     ->required()
